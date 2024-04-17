@@ -1,0 +1,15 @@
+{
+  "name" : "libcpp-http-client-examples",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "0719a71389654b88d827501d88e37e58ea8cbd70",
+  "dependencies" : [ {
+    "name" : "curl",
+    "version>=" : "8.6.0"
+  }, {
+    "name" : "gtest",
+    "version>=" : "1.14.0"
+  }, {
+    "name" : "nlohmann-json",
+    "version>=" : "3.11.3"
+  } ]
+}
