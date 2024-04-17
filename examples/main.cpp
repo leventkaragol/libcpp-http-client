@@ -132,7 +132,7 @@ void simpleDeleteWithFormData() {
 
 void simplePatch() {
 
-    // You can send a DELETE request with QueryString just like GET
+    // You can send a PATCH request with QueryString just like GET
     auto response = HttpClient::patchRequest("https://httpbun.com/patch?param1=7&param2=test").get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
