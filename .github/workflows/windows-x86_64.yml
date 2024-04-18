@@ -29,11 +29,16 @@ jobs:
           & "C:\vcpkg\bootstrap-vcpkg.bat"
           echo "VCPKG_ROOT=C:\vcpkg" | Out-File -Append -Encoding ascii $env:GITHUB_ENV
 
-      - name: Integrate vcpkg and install dependencies
+      - name: Integrate vcpkg
         run: |
           $env:VCPKG_ROOT = "C:\vcpkg"
           & "$env:VCPKG_ROOT\vcpkg" integrate install
-          & "$env:VCPKG_ROOT\vcpkg" install --triplet x64-windows your-library-list
+
+      - name: Install dependencies
+        run: |
+          $env:VCPKG_ROOT = "C:\vcpkg"
+          cd $env:GITHUB_WORKSPACE
+          & "$env:VCPKG_ROOT\vcpkg" install
 
       - name: Prepare build environment
         run: |
