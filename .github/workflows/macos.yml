@@ -17,10 +17,13 @@ jobs:
         run: |
           brew update
           brew install cmake pkg-config git wget curl
-      - name: Install vcpkg
+      - name: Handle existing vcpkg installation
         run: |
-          brew list vcpkg && brew unlink vcpkg && brew uninstall vcpkg || true
+          if brew list vcpkg; then
+            brew unlink vcpkg && brew uninstall vcpkg
+          fi
           brew install vcpkg
+          brew link --overwrite vcpkg
           vcpkg integrate install
       - name: Clone project repository
         run: |
