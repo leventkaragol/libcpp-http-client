@@ -17,10 +17,14 @@ jobs:
         run: |
           brew update
           brew install cmake pkg-config git wget curl
-      - name: Handle existing vcpkg installation
+      - name: Prepare vcpkg
         run: |
           if brew list vcpkg; then
-            brew unlink vcpkg && brew uninstall vcpkg
+            brew unlink vcpkg
+            brew uninstall --ignore-dependencies vcpkg
+          fi
+          if [ -f /usr/local/bin/vcpkg ]; then
+            rm /usr/local/bin/vcpkg
           fi
           brew install vcpkg
           brew link --overwrite vcpkg
