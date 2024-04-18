@@ -1,6 +1,5 @@
 # libcpp-http-client
-Modern non-blocking HTTP Client library for C++ (17+)
+Modern non-blocking exception free HTTP Client library for C++ (17+)
 
-[![linux-x86_64](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux-x86_64.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux-x86_64.yml)
-[![linux-aarch64](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux-aarch64.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux-aarch64.yml)
-[![windows-x86_64](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows-x86_64.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows-x86_64.yml)
+[![linux](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux.yml)
+[![windows](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows.yml)
