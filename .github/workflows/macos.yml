@@ -17,17 +17,19 @@ jobs:
         run: |
           brew update
           brew install cmake pkg-config git wget curl
-      - name: Prepare vcpkg
+      - name: Manage vcpkg installation
         run: |
-          if brew list vcpkg; then
-            brew unlink vcpkg
-            brew uninstall --ignore-dependencies vcpkg
+          if brew list vcpkg &>/dev/null; then
+            brew unlink vcpkg && brew uninstall --ignore-dependencies vcpkg
           fi
           if [ -f /usr/local/bin/vcpkg ]; then
-            rm /usr/local/bin/vcpkg
+            sudo rm /usr/local/bin/vcpkg
           fi
           brew install vcpkg
-          brew link --overwrite vcpkg
+      - name: Setup vcpkg environment
+        run: |
+          export VCPKG_ROOT=$(brew --prefix vcpkg)
+          echo "VCPKG_ROOT=$VCPKG_ROOT" >> $GITHUB_ENV
           vcpkg integrate install
       - name: Clone project repository
         run: |
@@ -35,7 +37,7 @@ jobs:
       - name: Run cmake with vcpkg toolchain
         run: |
           cd ~/libcpp-http-client
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(brew --prefix vcpkg)/scripts/buildsystems/vcpkg.cmake
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
       - name: Build the project
         run: |
           cd ~/libcpp-http-client
