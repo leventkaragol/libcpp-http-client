@@ -57,7 +57,7 @@ jobs:
 
       - name: Check test executable
         run: |
-          if (Test-Path "D:\a\libcpp-http-client\libcpp-http-client\build\test\test.exe") {
+          if (Test-Path "D:\a\libcpp-http-client\libcpp-http-client\build\test\Release\test.exe") {
             Write-Host "Test executable exists."
           } else {
             Write-Host "Test executable does not exist."
@@ -66,4 +66,4 @@ jobs:
 
       - name: Run tests
         run: |
-          & "D:\a\libcpp-http-client\libcpp-http-client\build\test\test.exe"
+          & "D:\a\libcpp-http-client\libcpp-http-client\build\test\Release\test.exe"
