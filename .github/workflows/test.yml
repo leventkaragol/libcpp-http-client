@@ -15,15 +15,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Checkout vcpkg
+        uses: actions/checkout@v3
+        with:
+          repository: 'microsoft/vcpkg'
+          path: 'vcpkg'
 
-      - name: Install C++ compiler and tools
+      - name: Install vcpkg dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y g++ make cmake libcurl4-openssl-dev libjson-c-dev pkg-config
+          ./vcpkg/bootstrap-vcpkg.sh
+          ./vcpkg/vcpkg install curl jsoncpp nlohmann-json
 
-      - name: Configure CMake
+      - name: Configure CMake with vcpkg toolchain
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
         run: |
