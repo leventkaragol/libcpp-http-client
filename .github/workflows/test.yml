@@ -35,22 +35,28 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    container:
-      image: ${{ matrix.container }}
-
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup C++
-        uses: actions/setup-cpp@v2
-        with:
-          architecture: ${{ matrix.arch }}
-          cmake-version: '3.27'
+      - name: Install C++ compiler (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ make cmake
+
+      - name: Install C++ compiler (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          xcode-select --install
+
+      - name: Install C++ compiler (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev
           sudo apt-get install libjson-c-dev
 
