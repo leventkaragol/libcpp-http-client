@@ -1,5 +1,6 @@
 name: Test
 
+
 on:
   push:
     branches:
@@ -10,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-x86:
+  linux-test-x86:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:22.04
@@ -42,23 +43,22 @@ jobs:
           cd /root/libcpp-http-client
           ./build/test/test
 
-  build-test-aarch64:
-    needs: build-test-x86
+  linux-test-aarch64:
+    needs: linux-test-x86
     runs-on: ubuntu-latest
-    container:
-      image: arm64v8/ubuntu:22.04
-
     steps:
+      - uses: docker/setup-qemu-action@v1
+        with:
+          platforms: all
       - uses: actions/checkout@v3
-      - name: Install prerequisites
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Install prerequisites and build project using qemu
         run: |
-          apt update
-          apt install -y build-essential g++ make cmake pkg-config git wget curl zip unzip tar
-      - name: Install vcpkg
-        run: |
-          git clone https://github.com/microsoft/vcpkg.git /opt/vcpkg
-          /opt/vcpkg/bootstrap-vcpkg.sh
-          ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker buildx create --name mybuilder --use
+          docker buildx build --platform linux/arm64 -o type=docker -t myimage .
+          docker run myimage
       - name: Clone project repository
         run: |
           git clone https://github.com/lk-libs/libcpp-http-client.git /root/libcpp-http-client
@@ -66,11 +66,10 @@ jobs:
         run: |
           cd /root/libcpp-http-client
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
-      - name: Build the project
+      - name: Build the project using Buildx
         run: |
-          cd /root/libcpp-http-client
-          cmake --build build --config Release
-      - name: Run tests
+          docker buildx build --platform linux/arm64 -o type=docker -t myproject .
+          docker run myproject
+      - name: Run tests in Docker
         run: |
-          cd /root/libcpp-http-client
-          ./build/test/test
+          docker run myproject /root/libcpp-http-client/build/test/test
