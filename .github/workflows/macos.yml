@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Xcode CLI tools
         run: |
-          xcode-select --install || true
+          xcode-select --install
       - name: Install prerequisites
         run: |
           brew update
@@ -31,8 +31,7 @@ jobs:
           brew install vcpkg
       - name: Setup vcpkg environment
         run: |
-          export VCPKG_ROOT=$(brew --prefix vcpkg)
-          echo "VCPKG_ROOT=$VCPKG_ROOT" >> $GITHUB_ENV
+          echo "VCPKG_ROOT=$(brew --prefix vcpkg)" >> $GITHUB_ENV
           vcpkg integrate install
       - name: Clone project repository
         run: |
