@@ -13,6 +13,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install Xcode CLI tools
+        run: |
+          xcode-select --install || true
       - name: Install prerequisites
         run: |
           brew update
