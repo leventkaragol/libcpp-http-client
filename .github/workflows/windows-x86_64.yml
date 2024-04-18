@@ -42,11 +42,14 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake" | Out-File -Append -Encoding ascii $env:GITHUB_ENV
+          $env:CMAKE_TOOLCHAIN_FILE="${env:VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake"
+          echo "CMAKE_TOOLCHAIN_FILE=${env:CMAKE_TOOLCHAIN_FILE}" | Out-File -Append -Encoding ascii $env:GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE is set to ${env:CMAKE_TOOLCHAIN_FILE}"
 
       - name: Configure CMake project
         run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${env:CMAKE_TOOLCHAIN_FILE}
+          echo "Using CMAKE_TOOLCHAIN_FILE: ${env:CMAKE_TOOLCHAIN_FILE}"
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
 
       - name: Build the project
         run: |
