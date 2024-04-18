@@ -10,55 +10,66 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  build-test-x86:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        architecture: [x86_64, aarch64]
+    container:
+      image: ubuntu:22.04
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        if: matrix.architecture == 'aarch64'
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: all
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
-
       - name: Install prerequisites
         run: |
           apt update
-          apt full-upgrade -y
-          apt auto-remove -y
           apt install -y build-essential g++ make cmake pkg-config git wget curl zip unzip tar
-
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git /opt/vcpkg
           /opt/vcpkg/bootstrap-vcpkg.sh
           ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg
-
       - name: Clone project repository
         run: |
           git clone https://github.com/lk-libs/libcpp-http-client.git /root/libcpp-http-client
-
       - name: Run cmake with vcpkg toolchain
         run: |
           cd /root/libcpp-http-client
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
-
       - name: Build the project
         run: |
           cd /root/libcpp-http-client
           cmake --build build --config Release
+      - name: Run tests
+        run: |
+          cd /root/libcpp-http-client
+          ./build/test/test
 
+  build-test-aarch64:
+    needs: build-test-x86
+    runs-on: ubuntu-latest
+    container:
+      image: arm64v8/ubuntu:22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install prerequisites
+        run: |
+          apt update
+          apt install -y build-essential g++ make cmake pkg-config git wget curl zip unzip tar
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git /opt/vcpkg
+          /opt/vcpkg/bootstrap-vcpkg.sh
+          ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg
+      - name: Clone project repository
+        run: |
+          git clone https://github.com/lk-libs/libcpp-http-client.git /root/libcpp-http-client
+      - name: Run cmake with vcpkg toolchain
+        run: |
+          cd /root/libcpp-http-client
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
+      - name: Build the project
+        run: |
+          cd /root/libcpp-http-client
+          cmake --build build --config Release
       - name: Run tests
         run: |
           cd /root/libcpp-http-client
