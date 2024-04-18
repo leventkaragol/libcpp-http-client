@@ -55,6 +55,15 @@ jobs:
         run: |
           cmake --build build --config Release
 
+      - name: Check if test executable exists
+        run: |
+          if (Test-Path "./build/test/test.exe") {
+            Write-Host "Test executable exists."
+          } else {
+            Write-Host "Test executable does not exist."
+            exit 1
+          }
+
       - name: Run tests
         run: |
-          .\build\test\test.exe
+          & "D:\a\libcpp-http-client\libcpp-http-client\build\test\test.exe"
