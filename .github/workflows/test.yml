@@ -12,8 +12,17 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x86_64
+            container: ubuntu:22.04
+          - architecture: aarch64
+            container: arm64v8/ubuntu:22.04
+
     container:
-      image: ubuntu:22.04
+      image: ${{ matrix.container }}
 
     steps:
       - name: Checkout the repository
