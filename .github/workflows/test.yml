@@ -29,7 +29,7 @@ jobs:
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git /opt/vcpkg
-          ./opt/vcpkg/bootstrap-vcpkg.sh
+          /opt/vcpkg/bootstrap-vcpkg.sh
           ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg
 
       - name: Clone project repository
