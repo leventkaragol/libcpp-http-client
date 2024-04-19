@@ -83,7 +83,7 @@ int main() {
 
 ## What does non-blocking mean?
 
-Let's talk about this through an example. Let's say we call 5 different API methods when our 
+Let's talk about this through an example. Let's say, we call 5 different API methods when our 
 screen opens and each one takes an average of 500 ms. If we call these methods one after another 
 as follows, we will get all the answers in 2.5 seconds in total.
 
