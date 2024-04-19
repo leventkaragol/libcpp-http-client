@@ -312,51 +312,53 @@ Versioning of the library is done using conventional semantic versioning. Accord
 
 You can find the complete list of functions in the library below. In fact, they are just overloaded versions of 5 functions in total.
 
-* getRequest
-    * std::future<HttpResult> getRequest(const std::string &url)
-    * std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary)
-    * std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+```cpp
+- getRequest
+    - std::future<HttpResult> getRequest(const std::string &url)
+    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary)
+    - std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
 
 
-* postRequest
-    * std::future<HttpResult> postRequest(const std::string &url)
-    * std::future<HttpResult> postRequest(const std::string &url, const std::string &payload)
-    * std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary)
-    * std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    * std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+- postRequest
+    - std::future<HttpResult> postRequest(const std::string &url)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload)
+    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
 
 
-* putRequest
-    * std::future<HttpResult> putRequest(const std::string &url)
-    * std::future<HttpResult> putRequest(const std::string &url, const std::string &payload)
-    * std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary)
-    * std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    * std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+- putRequest
+    - std::future<HttpResult> putRequest(const std::string &url)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload)
+    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
 
 
-* deleteRequest
-    * std::future<HttpResult> deleteRequest(const std::string &url)
-    * std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload)
-    * std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary)
-    * std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    * std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+- deleteRequest
+    - std::future<HttpResult> deleteRequest(const std::string &url)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload)
+    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
 
 
-* patchRequest
-    * std::future<HttpResult> patchRequest(const std::string &url)
-    * std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary)
-    * std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    * std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+- patchRequest
+    - std::future<HttpResult> patchRequest(const std::string &url)
+    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary)
+    - std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+```
 
 
 ## License
