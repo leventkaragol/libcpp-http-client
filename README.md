@@ -312,6 +312,9 @@ Versioning of the library is done using conventional semantic versioning. Accord
 
 You can find the complete list of functions in the library below. In fact, they are just overloaded versions of 5 functions in total.
 
+> [!TIP]
+> Descriptions of all methods and parameters are also available within the code for IDE use.
+
 ```cpp
 - getRequest
     - std::future<HttpResult> getRequest(const std::string &url)
