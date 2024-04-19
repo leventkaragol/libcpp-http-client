@@ -29,11 +29,11 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 
 ## How to add it to my project?
 
-This is a header only library. So actually, all you need is to add the libcpp-http-client.hpp file to your project and start using it with #include.
+This is a header only library. So actually, all you need is to add the libcpp-http-client.hpp file in src folder to your project and start using it with #include.
 
 But this library is a kind of Curl wrapper that uses Curl under the hood. So, you need to add Curl to your project before to use it.
 
-You can find usage examples in the examples folder. You can also find a sample CMakeLists.txt file content below.
+You can find usage examples in the examples folder, also find a sample CMakeLists.txt file content below.
 
 ```cmake
 cmake_minimum_required(VERSION 3.14)
