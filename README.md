@@ -16,8 +16,8 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 
 * [How to add it to my project](#how-to-add-it-to-my-project)
 * [How to use? (Simplest way)](#how-to-use-simplest-way)
-* [What does exception free mean?](#what-does-exception-free-mean)
 * [What does non-blocking mean?](#what-does-non-blocking-mean)
+* [What does exception free mean?](#what-does-exception-free-mean)
 * [What about binary data?](#what-about-binary-data)
 * [Sending Custom HTTP Headers](#sending-custom-http-headers)
 * [POST request with form data](#post-request-with-form-data)
@@ -81,41 +81,6 @@ int main() {
 ```
 
 
-## What does exception free mean?
-
-Exception Free means that no exception will be thrown for any call you make to this library. 
-If the URL cannot be found, there is a timeout, there is an authorization problem or another 
-error occurs on the server, the bool typed "succeed" field of the response is returned as false. 
-In addition, the HTTP Status Code value returned from the server is returned in the int typed 
-"statusCode" field and possibly additional error information that may be returned from the server
-is returned in the string typed "errorMessage" field.
-
-You can see an example use case below...
-
-```cpp
-#include <fstream>
-#include "libcpp-http-client.hpp"
-
-using namespace lklibs;
-
-int main() {
-    
-    auto response = HttpClient::getRequest("https://www.myinvalidurl.com").get();
-
-    // Instead of throwing an exception, the succeed field of the response object is set to false
-    std::cout << "Succeed: " << response.succeed << std::endl;
-
-    // And the http status code is set to the statusCode field (404 in this case)
-    std::cout << "Http Status Code: " << response.statusCode << std::endl;
-
-    // Also if any error message is available, it is set to the errorMessage field
-    std::cout << "Error Message: " << response.errorMessage << std::endl;
-
-    return 0;
-}
-```
-
-
 ## What does non-blocking mean?
 
 Let's talk about this through an example. Let's say we call 5 different API methods when our 
@@ -173,6 +138,41 @@ int main() {
 ```
 
 All functions in the library return a future and allow the next line to run without blocking the flow.
+
+
+## What does exception free mean?
+
+Exception Free means that no exception will be thrown for any call you make to this library.
+If the URL cannot be found, there is a timeout, there is an authorization problem or another
+error occurs on the server, the bool typed "succeed" field of the response is returned as false.
+In addition, the HTTP Status Code value returned from the server is returned in the int typed
+"statusCode" field and possibly additional error information that may be returned from the server
+is returned in the string typed "errorMessage" field.
+
+You can see an example use case below...
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    
+    auto response = HttpClient::getRequest("https://www.myinvalidurl.com").get();
+
+    // Instead of throwing an exception, the succeed field of the response object is set to false
+    std::cout << "Succeed: " << response.succeed << std::endl;
+
+    // And the http status code is set to the statusCode field (404 in this case)
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+
+    // Also if any error message is available, it is set to the errorMessage field
+    std::cout << "Error Message: " << response.errorMessage << std::endl;
+
+    return 0;
+}
+```
 
 
 ## What about binary data?
