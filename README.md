@@ -21,8 +21,8 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [POST request with form data](#post-request-with-form-data)
 * [POST request with JSON data](#post-request-with-json-data)
 * [What about others? (PUT, DELETE, PATCH)](#what-about-others-put-delete-patch)
-* [Full function list](#full-function-list)
 * [Semantic Versioning](#semantic-versioning)
+* [Full function list](#full-function-list)
 * [License](#license)
 * [Contact](#contact)
 
@@ -313,7 +313,7 @@ Versioning of the library is done using conventional semantic versioning. Accord
 You can find the complete list of functions in the library below. In fact, they are just overloaded versions of 5 functions in total.
 
 > [!TIP]
-> Descriptions of all methods and parameters are also available within the code for IDE use.
+> All methods and parameters descriptions are also available within the code as comment for IDEs.
 
 ```cpp
 - getRequest
