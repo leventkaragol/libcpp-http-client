@@ -7,7 +7,9 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 
 
 > [!NOTE]
-> Please read this document before using the library. I know, you don't have time but reading this document will save you time. I mean just this file, it's not long at all. Trial and error will cost you more time.
+> Please read this document before using the library. I know, you don't have time but reading 
+> this document will save you time. I mean just this file, it's not long at all. Trial and error 
+> will cost you more time.
 
 
 # Table of Contents
@@ -29,9 +31,11 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 
 ## How to add it to my project?
 
-This is a header only library. So actually, all you need is to add the libcpp-http-client.hpp file in src folder to your project and start using it with #include.
+This is a header only library. So actually, all you need is to add the libcpp-http-client.hpp file 
+in src folder to your project and start using it with #include.
 
-But this library is a kind of Curl wrapper that uses Curl under the hood. So, you need to add Curl to your project before to use it.
+But this library is a kind of Curl wrapper that uses Curl under the hood. So, you need to add Curl to 
+your project before to use it.
 
 You can find usage examples in the examples folder, also find a sample CMakeLists.txt file content below.
 
@@ -54,7 +58,8 @@ target_link_libraries(myProject PRIVATE libcpp-http-client CURL::libcurl)
 Below you can see the simplest use case sending QueryString parameters to an API via HTTP GET.
 
 > [!TIP]
-> Please do not use it this way, if more than one call will be made . You do not use the non-blocking feature in this way.
+> Please do not use it this way, if more than one call will be made . You do not use the non-blocking
+> feature in this way.
 
 ```cpp
 #include <fstream>
@@ -78,7 +83,12 @@ int main() {
 
 ## What does exception free mean?
 
-Exception Free means that no exception will be thrown for any call you make to this library. If the URL cannot be found, there is a timeout, there is an authorization problem or another error occurs on the server, the bool typed "succeed" field of the response is returned as false. In addition, the HTTP Status Code value returned from the server is returned in the int typed "statusCode" field and possibly additional error information that may be returned from the server is returned in the string typed "errorMessage" field.
+Exception Free means that no exception will be thrown for any call you make to this library. 
+If the URL cannot be found, there is a timeout, there is an authorization problem or another 
+error occurs on the server, the bool typed "succeed" field of the response is returned as false. 
+In addition, the HTTP Status Code value returned from the server is returned in the int typed 
+"statusCode" field and possibly additional error information that may be returned from the server
+is returned in the string typed "errorMessage" field.
 
 You can see an example use case below...
 
@@ -108,7 +118,9 @@ int main() {
 
 ## What does non-blocking mean?
 
-Let's talk about this through an example. Let's say we call 5 different API methods when our screen opens and each one takes an average of 500 ms. If we call these methods one after another as follows, we will get all the answers in 2.5 seconds in total.
+Let's talk about this through an example. Let's say we call 5 different API methods when our 
+screen opens and each one takes an average of 500 ms. If we call these methods one after another 
+as follows, we will get all the answers in 2.5 seconds in total.
 
 ```cpp
 #include <fstream>
@@ -130,7 +142,9 @@ int main() {
 }
 ```
 
-".get()" call at the end of each line causes us to wait until the server responds. However, if we make the same call as follows, all requests will be processed in parallel and the total time will take approximately 0.5 seconds.
+".get()" call at the end of each line causes us to wait until the server responds. However, 
+if we make the same call as follows, all requests will be processed in parallel and the total 
+time will take approximately 0.5 seconds.
 
 ```cpp
 #include <fstream>
@@ -163,7 +177,11 @@ All functions in the library return a future and allow the next line to run with
 
 ## What about binary data?
 
-In the examples so far, we have used the **"textData"** property of the returning response object. However, we need binary data for requests made to binary files such as images. In such cases, we can ensure that the returned data is returned in **"binaryData"** of type ***"std::vector&lt;unsigned char&gt;"*** instead of **"textData"** by passing the value **"true"** to the **"returnAsBinary"** parameter.
+In the examples so far, we have used the **"textData"** property of the returning response object.
+However, we need binary data for requests made to binary files such as images. In such cases, 
+we can ensure that the returned data is returned in **"binaryData"** of type 
+***"std::vector&lt;unsigned char&gt;"*** instead of **"textData"** by passing the value **"true"** 
+to the **"returnAsBinary"** parameter.
 
 ```cpp
 #include <fstream>
@@ -189,7 +207,8 @@ int main() {
 
 ## Sending custom HTTP headers
 
-If you need to send custom HTTP HEADERs during the request, you can send them in std::map<std::string, std::string> format.
+If you need to send custom HTTP HEADERs during the request, you can send them in 
+std::map<std::string, std::string> format.
 
 ```cpp
 #include <fstream>
@@ -216,7 +235,8 @@ int main() {
 
 ## POST request with form data
 
-Next is submitting form data via HTTP POST. All you have to do is use **"postRequest"** instead of **"getRequest"**. You can pass the form data to the **"payload"** variable as seen in the sample code below.
+Next is submitting form data via HTTP POST. All you have to do is use **"postRequest"** instead 
+of **"getRequest"**. You can pass the form data to the **"payload"** variable as seen in the sample code below.
 
 ```cpp
 #include <fstream>
@@ -242,7 +262,8 @@ int main() {
 
 ## POST request with JSON data
 
-Sending JSON data via HTTP POST is not much different. Just remember to send **"Content-Type"** as **"application/json"** via HTTP HEADER.
+Sending JSON data via HTTP POST is not much different. Just remember to send **"Content-Type"** 
+as **"application/json"** via HTTP HEADER.
 
 ```cpp
 #include <fstream>
@@ -299,18 +320,24 @@ int main() {
 
 ## Semantic Versioning
 
-Versioning of the library is done using conventional semantic versioning. Accordingly, in the versioning made as **MAJOR.MINOR.PATCH**;
+Versioning of the library is done using conventional semantic versioning. Accordingly, 
+in the versioning made as **MAJOR.MINOR.PATCH**;
 
 **PATCH:** Includes possible Bug&Fixes and improvements. You definitely want to get this.
 
-**MINOR:** Additional functionality added via backwards compatibility. You probably want to get this, it doesn't hurt.
+**MINOR:** Additional functionality added via backwards compatibility. You probably want to 
+get this, it doesn't hurt.
 
-**MAJOR:** Additional functionality that breaks backwards compatibility. You'll need to know what's changed before you get it, and you'll probably have to make changes to your own code. If I publish something like this, I will definitely add the changes required for migration section to the documentation.
+**MAJOR:** Additional functionality that breaks backwards compatibility. You'll need to know 
+what's changed before you get it, and you'll probably have to make changes to your own code. 
+If I publish something like this, I will definitely add the changes required for migration 
+section to the documentation.
 
 
 ## Full function list
 
-You can find the complete list of functions in the library below. In fact, they are just overloaded versions of 5 functions in total.
+You can find the complete list of functions in the library below. In fact, they are just 
+overloaded versions of 5 functions in total.
 
 > [!TIP]
 > All methods and parameters descriptions are also available within the code as comment for IDEs.
@@ -390,3 +417,10 @@ SOFTWARE.
 
 
 ## Contact
+
+If you have problems regarding the library, please open an 
+[issue on GitHub](https://github.com/lk-libs/libcpp-http-client/issues/new). 
+Please describe your request, issue, or question in as much detail as possible 
+and also include the version of your compiler and operating system, as well as 
+the version of the library you are using. Before opening a new issue, please 
+confirm that the topic is not already exists in closed issues.
