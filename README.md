@@ -6,7 +6,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 [![windows](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows.yml)
 
 
-> [!NOTE]
+> [!TIP]
 > Please read this document before using the library. I know, you don't have time but reading 
 > this document will save you time. I mean just this file, it's not long at all. Trial and error 
 > will cost you more time.
@@ -34,8 +34,9 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 This is a header only library. So actually, all you need is to add the libcpp-http-client.hpp file 
 in src folder to your project and start using it with #include.
 
-But this library is a kind of Curl wrapper that uses Curl under the hood. So, you need to add Curl to 
-your project before to use it.
+> [!NOTE]
+> This library is a kind of Curl wrapper that uses Curl under the hood. So, you need to add Curl to 
+> your project before to use it.
 
 You can find usage examples in the examples folder, also find a sample CMakeLists.txt file content below.
 
@@ -57,9 +58,9 @@ target_link_libraries(myProject PRIVATE libcpp-http-client CURL::libcurl)
 
 Below you can see the simplest use case sending QueryString parameters to an API via HTTP GET.
 
-> [!TIP]
+> [!IMPORTANT]
 > Please do not use it this way, if more than one call will be made . You do not use the non-blocking
-> feature in this way.
+> feature in this way. Just keep reading...
 
 ```cpp
 #include <fstream>
