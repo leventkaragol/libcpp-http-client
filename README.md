@@ -7,7 +7,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 
 
 > [!NOTE]
-> Please read this document before using the library. I know you don't have time, but reading this document will save you time. I mean just this file, it's not long at all. Trial and error will cost you more time.
+> Please read this document before using the library. I know, you don't have time but reading this document will save you time. I mean just this file, it's not long at all. Trial and error will cost you more time.
 
 
 # Table of Contents
@@ -187,7 +187,7 @@ int main() {
 ```
 
 
-## Sending Custom HTTP Headers
+## Sending custom HTTP headers
 
 If you need to send custom HTTP HEADERs during the request, you can send them in std::map<std::string, std::string> format.
 
