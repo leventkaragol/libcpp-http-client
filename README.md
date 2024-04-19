@@ -101,7 +101,7 @@ int main() {
     auto response4 = HttpClient::getRequest("https://api.myproject.com/qux").get();
     auto response5 = HttpClient::getRequest("https://api.myproject.com/quux").get();
 
-    // Take 2.5 seconds in total
+    // Takes 2.5 seconds in total
 
     return 0;
 }
@@ -131,7 +131,7 @@ int main() {
     auto response4 = future4.get();
     auto response5 = future5.get();
 
-    // Take 0.5 seconds in total
+    // Takes 0.5 seconds in total
 
     return 0;
 }
