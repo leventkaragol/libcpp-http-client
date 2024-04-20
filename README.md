@@ -23,6 +23,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [POST request with form data](#post-request-with-form-data)
 * [POST request with JSON data](#post-request-with-json-data)
 * [What about others? (PUT, DELETE, PATCH)](#what-about-others-put-delete-patch)
+* [How to ignore SSL certificate errors?](#how-to-ignore-ssl-certificate-errors)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
 * [License](#license)
@@ -336,6 +337,30 @@ int main() {
 ```
 
 
+## How to ignore SSL certificate errors?
+
+If you need to ignore SSL certificate errors for any valid reason, you can continue working
+by passing the **"true"** value to the **"ignoreSslErrors"** parameter at the end of the functions.
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    
+    HttpClient httpClient;
+
+    std::string payload = "param1=7&param2=test";
+
+    auto response = httpClient.postRequest("https://api.myinvalidssl.com", payload, true).get();
+
+    return 0;
+}
+```
+
+
 ## Semantic Versioning
 
 Versioning of the library is done using conventional semantic versioning. Accordingly, 
@@ -363,49 +388,49 @@ overloaded versions of 5 functions in total.
 ```cpp
 - getRequest
     - std::future<HttpResult> getRequest(const std::string &url)
-    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
 
 
 - postRequest
     - std::future<HttpResult> postRequest(const std::string &url)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload)
-    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool ignoreSslErrors = false)
+    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
 
 
 - putRequest
     - std::future<HttpResult> putRequest(const std::string &url)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload)
-    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool ignoreSslErrors = false)
+    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
 
 
 - deleteRequest
     - std::future<HttpResult> deleteRequest(const std::string &url)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload)
-    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool ignoreSslErrors = false)
+    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
 
 
 - patchRequest
     - std::future<HttpResult> patchRequest(const std::string &url)
-    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, bool ignoreSslErrors = false)
+    - std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
+    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers, bool ignoreSslErrors = false)
 ```
 
 
