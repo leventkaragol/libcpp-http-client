@@ -69,8 +69,10 @@ using namespace lklibs;
 
 int main() {
 
+    HttpClient httpClient;
+
     // The simplest but slowest method if multiple calls will be made
-    auto response = HttpClient::getRequest("https://api.myproject.com?param1=7&param2=test").get();
+    auto response = httpClient.getRequest("https://api.myproject.com?param1=7&param2=test").get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -95,11 +97,13 @@ using namespace lklibs;
 
 int main() {
     
-    auto response1 = HttpClient::getRequest("https://api.myproject.com/foo").get();
-    auto response2 = HttpClient::getRequest("https://api.myproject.com/bar").get();
-    auto response3 = HttpClient::getRequest("https://api.myproject.com/baz").get();
-    auto response4 = HttpClient::getRequest("https://api.myproject.com/qux").get();
-    auto response5 = HttpClient::getRequest("https://api.myproject.com/quux").get();
+    HttpClient httpClient;
+
+    auto response1 = httpClient.getRequest("https://api.myproject.com/foo").get();
+    auto response2 = httpClient.getRequest("https://api.myproject.com/bar").get();
+    auto response3 = httpClient.getRequest("https://api.myproject.com/baz").get();
+    auto response4 = httpClient.getRequest("https://api.myproject.com/qux").get();
+    auto response5 = httpClient.getRequest("https://api.myproject.com/quux").get();
 
     // Takes 2.5 seconds in total
 
@@ -119,11 +123,11 @@ using namespace lklibs;
 
 int main() {
     
-    auto future1 = HttpClient::getRequest("https://api.myproject.com/foo");
-    auto future2 = HttpClient::getRequest("https://api.myproject.com/bar");
-    auto future3 = HttpClient::getRequest("https://api.myproject.com/baz");
-    auto future4 = HttpClient::getRequest("https://api.myproject.com/qux");
-    auto future5 = HttpClient::getRequest("https://api.myproject.com/quux");
+    auto future1 = httpClient.getRequest("https://api.myproject.com/foo");
+    auto future2 = httpClient.getRequest("https://api.myproject.com/bar");
+    auto future3 = httpClient.getRequest("https://api.myproject.com/baz");
+    auto future4 = httpClient.getRequest("https://api.myproject.com/qux");
+    auto future5 = httpClient.getRequest("https://api.myproject.com/quux");
     
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -159,7 +163,7 @@ using namespace lklibs;
 
 int main() {
     
-    auto response = HttpClient::getRequest("https://www.myinvalidurl.com").get();
+    auto response = httpClient.getRequest("https://www.myinvalidurl.com").get();
 
     // Instead of throwing an exception, the succeed field of the response object is set to false
     std::cout << "Succeed: " << response.succeed << std::endl;
@@ -192,7 +196,7 @@ using namespace lklibs;
 int main() {
     
     // If you need to retrieve binary data such as an image, just pass the "returnAsBinary" parameter as true
-    auto response = HttpClient::getRequest("https://api.myproject.com/image/7", true).get();
+    auto response = httpClient.getRequest("https://api.myproject.com/image/7", true).get();
     
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -224,7 +228,7 @@ int main() {
     headers["Custom-Header1"] = "value1";
     headers["Custom-Header2"] = "value2";
 
-    auto response = HttpClient::getRequest("https://api.myproject.com?param1=7&param2=test", headers).get();
+    auto response = httpClient.getRequest("https://api.myproject.com?param1=7&param2=test", headers).get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
 
@@ -249,7 +253,7 @@ int main() {
     // You can send a POST request with form data in the payload
     std::string payload = "param1=7&param2=test";
 
-    auto response = HttpClient::postRequest("https://api.myproject.com", payload).get();
+    auto response = httpClient.postRequest("https://api.myproject.com", payload).get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -280,7 +284,7 @@ int main() {
 
     headers["Content-Type"] = "application/json";
 
-    auto response = HttpClient::postRequest("https://api.myproject.com", payload, headers).get();
+    auto response = httpClient.postRequest("https://api.myproject.com", payload, headers).get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -305,9 +309,9 @@ int main() {
     
     std::string payload = "param1=7&param2=test";
 
-    auto future1 = HttpClient::putRequest("https://api.myproject.com", payload);
-    auto future2 = HttpClient::deleteRequest("https://api.myproject.com", payload);
-    auto future3 = HttpClient::patchRequest("https://api.myproject.com?param1=7&param2=test");
+    auto future1 = httpClient.putRequest("https://api.myproject.com", payload);
+    auto future2 = httpClient.deleteRequest("https://api.myproject.com", payload);
+    auto future3 = httpClient.patchRequest("https://api.myproject.com?param1=7&param2=test");
 
     auto response1 = future1.get();
     auto response2 = future2.get();
