@@ -1,7 +1,7 @@
 /*
 
 Modern non-blocking HTTP Client library for C++ (17+)
-version 1.0.0
+version 1.1.0
 https://github.com/lk-libs/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/lk-libs/libcpp-http-client/issues
@@ -92,6 +92,11 @@ namespace lklibs {
         }
 
         /**
+         * @brief Ignore SSL errors when making HTTP requests
+         */
+        bool ignoreSslErrors = false;
+
+        /**
          * @brief Makes an HTTP GET request for the given URL and returns the result
          *
          * @param url: Request URL
@@ -106,7 +111,7 @@ namespace lklibs {
          * @brief Makes an HTTP GET request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary) noexcept {
@@ -118,7 +123,7 @@ namespace lklibs {
          * @brief Makes an HTTP GET request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
@@ -130,8 +135,8 @@ namespace lklibs {
          * @brief Makes an HTTP GET request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -155,7 +160,7 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
+         * @param payload: Payload to be sent with the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, const std::string &payload) noexcept {
@@ -167,7 +172,7 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary) noexcept {
@@ -179,7 +184,7 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
@@ -191,8 +196,8 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary) noexcept {
@@ -204,8 +209,8 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers) noexcept {
@@ -217,8 +222,8 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -230,9 +235,9 @@ namespace lklibs {
          * @brief Makes an HTTP POST request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -256,7 +261,7 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
+         * @param payload: Payload to be sent with the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, const std::string &payload) noexcept {
@@ -268,7 +273,7 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary) noexcept {
@@ -280,7 +285,7 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
@@ -292,8 +297,8 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary) noexcept {
@@ -305,8 +310,8 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers) noexcept {
@@ -318,8 +323,8 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -331,9 +336,9 @@ namespace lklibs {
          * @brief Makes an HTTP PUT request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -357,7 +362,7 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
+         * @param payload: Payload to be sent with the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload) noexcept {
@@ -369,7 +374,7 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary) noexcept {
@@ -381,7 +386,7 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
@@ -393,8 +398,8 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary) noexcept {
@@ -406,8 +411,8 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers) noexcept {
@@ -419,8 +424,8 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -432,9 +437,9 @@ namespace lklibs {
          * @brief Makes an HTTP DELETE request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param payload: Payload to be sent with the request (Optional)
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param payload: Payload to be sent with the request
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -458,7 +463,7 @@ namespace lklibs {
          * @brief Makes an HTTP PATCH request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary) noexcept {
@@ -470,7 +475,7 @@ namespace lklibs {
          * @brief Makes an HTTP PATCH request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
@@ -482,8 +487,8 @@ namespace lklibs {
          * @brief Makes an HTTP PATCH request for the given URL and returns the result
          *
          * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string (Optional)
-         * @param headers: HTTP Header information to be sent when making the request (Optional)
+         * @param returnAsBinary: Return result as binary instead of string
+         * @param headers: HTTP Header information to be sent when making the request
          * @return Result of the request (see HttpResult object for details)
          */
         std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
@@ -517,7 +522,7 @@ namespace lklibs {
 
         std::future<HttpResult> request(const std::string &url, const std::string &method, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) {
 
-            return std::async(std::launch::async, [url, method, payload, returnAsBinary, headers]() -> HttpResult {
+            return std::async(std::launch::async, [this, url, method, payload, returnAsBinary, headers]() -> HttpResult {
 
                 std::unique_ptr<CURL, CurlDeleter> curl(curl_easy_init());
 
@@ -542,6 +547,8 @@ namespace lklibs {
                 curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headerList.get());
                 curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
                 curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, method.c_str());
+                curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->ignoreSslErrors ? 0L : 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->ignoreSslErrors ? 0L : 1L);
 
                 if (!payload.empty()) {
 

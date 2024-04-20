@@ -160,6 +160,20 @@ void simplePatch() {
     std::cout << "Data: " << response.textData << std::endl;
 }
 
+void ignoreSslErrors() {
+
+    HttpClient httpClient;
+
+    // If you need to ignore SSL errors, you can set the "ignoreSslErrors" field to true
+    httpClient.ignoreSslErrors = true;
+
+    auto response = httpClient.getRequest("https://self-signed-cert.httpbun.com").get();
+
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+    std::cout << "Data: " << response.textData << std::endl;
+}
+
 
 int main() {
 
@@ -182,6 +196,8 @@ int main() {
     simpleDeleteWithFormData();
 
     simplePatch();
+
+    ignoreSslErrors();
 
     return 0;
 }
