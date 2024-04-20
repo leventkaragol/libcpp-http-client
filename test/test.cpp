@@ -677,6 +677,32 @@ TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
+TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
+
+    HttpClient httpClient;
+
+    auto response = httpClient.getRequest("https://self-signed-cert.httpbun.com").get();
+
+    ASSERT_FALSE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 0) << "HTTP Status Code is not 0";
+    ASSERT_EQ(response.errorMessage, "SSL peer certificate or SSH remote key was not OK") << "HTTP Error Message is invalid";
+}
+
+TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfIgnoreSslErrorsFieldSetTrue) {
+
+    HttpClient httpClient;
+
+    httpClient.ignoreSslErrors = true;
+
+    auto response = httpClient.getRequest("https://self-signed-cert.httpbun.com").get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+    ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
+    ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
+    ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+}
+
 int main(int argc, char** argv) {
 
     testing::InitGoogleTest(&argc, argv);

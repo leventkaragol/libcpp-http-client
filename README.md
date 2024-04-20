@@ -339,8 +339,9 @@ int main() {
 
 ## How to ignore SSL certificate errors?
 
-If you need to ignore SSL certificate errors for any valid reason, you can continue working
-by passing the **"true"** value to the **"ignoreSslErrors"** parameter at the end of the functions.
+If you need to ignore SSL certificate errors for any valid reason, you can continue
+working by passing **"true"** value  to the **"ignoreSslErrors"** variable of the
+HttpClient class.
 
 ```cpp
 #include <fstream>
@@ -351,10 +352,11 @@ using namespace lklibs;
 int main() {
     
     HttpClient httpClient;
+    
+    // If you need to ignore SSL errors, you can set the "ignoreSslErrors" field to true
+    httpClient.ignoreSslErrors = true;
 
-    std::string payload = "param1=7&param2=test";
-
-    auto response = httpClient.postRequest("https://api.myinvalidssl.com", payload, true).get();
+    auto response = httpClient.getRequest("https://api.myinvalidssl.com").get();
 
     return 0;
 }
