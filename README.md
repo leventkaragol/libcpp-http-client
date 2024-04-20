@@ -123,6 +123,8 @@ using namespace lklibs;
 
 int main() {
     
+    HttpClient httpClient;
+
     auto future1 = httpClient.getRequest("https://api.myproject.com/foo");
     auto future2 = httpClient.getRequest("https://api.myproject.com/bar");
     auto future3 = httpClient.getRequest("https://api.myproject.com/baz");
@@ -163,6 +165,8 @@ using namespace lklibs;
 
 int main() {
     
+    HttpClient httpClient;
+
     auto response = httpClient.getRequest("https://www.myinvalidurl.com").get();
 
     // Instead of throwing an exception, the succeed field of the response object is set to false
@@ -195,6 +199,8 @@ using namespace lklibs;
 
 int main() {
     
+    HttpClient httpClient;
+
     // If you need to retrieve binary data such as an image, just pass the "returnAsBinary" parameter as true
     auto response = httpClient.getRequest("https://api.myproject.com/image/7", true).get();
     
@@ -222,7 +228,9 @@ using namespace lklibs;
 
 int main() {
     
-     // You can send custom headers in a string/string map
+    HttpClient httpClient;
+
+    // You can send custom headers in a string/string map
     auto headers = std::map<std::string, std::string>();
 
     headers["Custom-Header1"] = "value1";
@@ -250,6 +258,8 @@ using namespace lklibs;
 
 int main() {
     
+    HttpClient httpClient;
+
     // You can send a POST request with form data in the payload
     std::string payload = "param1=7&param2=test";
 
@@ -277,6 +287,8 @@ using namespace lklibs;
 
 int main() {
     
+    HttpClient httpClient;
+
     std::string payload = R"({"param1": 7, "param2": "test"})";
 
     // You need to send the "Content-Type" as "application/json" in the HTTP Header, if you need to send json data in the payload
@@ -307,6 +319,8 @@ using namespace lklibs;
 
 int main() {
     
+    HttpClient httpClient;
+
     std::string payload = "param1=7&param2=test";
 
     auto future1 = httpClient.putRequest("https://api.myproject.com", payload);
