@@ -59,7 +59,7 @@ target_link_libraries(myProject PRIVATE libcpp-http-client CURL::libcurl)
 Below you can see the simplest use case sending QueryString parameters to an API via HTTP GET.
 
 > [!IMPORTANT]
-> Please do not use it this way, if more than one call will be made . You do not use the non-blocking
+> Please do not use it this way, if more than one call will be made. You do not use the non-blocking
 > feature in this way. Just keep reading...
 
 ```cpp
@@ -70,10 +70,13 @@ using namespace lklibs;
 
 int main() {
 
-    HttpClient httpClient;
+    HttpRequest httpRequest("https://api.myproject.com");
 
     // The simplest but slowest method if multiple calls will be made
-    auto response = httpClient.getRequest("https://api.myproject.com?param1=7&param2=test").get();
+    auto response = httpRequest
+            .setQueryString("param1=7&param2=test")
+            .send()
+            .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -98,13 +101,17 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest1("https://api.myproject.com/foo");
+    HttpRequest httpRequest2("https://api.myproject.com/bar");
+    HttpRequest httpRequest3("https://api.myproject.com/baz");
+    HttpRequest httpRequest4("https://api.myproject.com/qux");
+    HttpRequest httpRequest5("https://api.myproject.com/quux");
 
-    auto response1 = httpClient.getRequest("https://api.myproject.com/foo").get();
-    auto response2 = httpClient.getRequest("https://api.myproject.com/bar").get();
-    auto response3 = httpClient.getRequest("https://api.myproject.com/baz").get();
-    auto response4 = httpClient.getRequest("https://api.myproject.com/qux").get();
-    auto response5 = httpClient.getRequest("https://api.myproject.com/quux").get();
+    auto response1 = httpRequest1.send().get();
+    auto response2 = httpRequest2.send().get();
+    auto response3 = httpRequest3.send().get();
+    auto response4 = httpRequest4.send().get();
+    auto response5 = httpRequest5.send().get();
 
     // Takes 2.5 seconds in total
 
@@ -124,13 +131,17 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest1("https://api.myproject.com/foo");
+    HttpRequest httpRequest2("https://api.myproject.com/bar");
+    HttpRequest httpRequest3("https://api.myproject.com/baz");
+    HttpRequest httpRequest4("https://api.myproject.com/qux");
+    HttpRequest httpRequest5("https://api.myproject.com/quux");
 
-    auto future1 = httpClient.getRequest("https://api.myproject.com/foo");
-    auto future2 = httpClient.getRequest("https://api.myproject.com/bar");
-    auto future3 = httpClient.getRequest("https://api.myproject.com/baz");
-    auto future4 = httpClient.getRequest("https://api.myproject.com/qux");
-    auto future5 = httpClient.getRequest("https://api.myproject.com/quux");
+    auto future1 = httpRequest.send();
+    auto future2 = httpRequest.send();
+    auto future3 = httpRequest.send();
+    auto future4 = httpRequest.send();
+    auto future5 = httpRequest.send();
     
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -144,7 +155,7 @@ int main() {
 }
 ```
 
-All functions in the library return a future and allow the next line to run without blocking the flow.
+**"send"** function in the library return a future and allow the next line to run without blocking the flow.
 
 
 ## What does exception free mean?
@@ -166,9 +177,9 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest("https://www.myinvalidurl.com");
 
-    auto response = httpClient.getRequest("https://www.myinvalidurl.com").get();
+    auto response = httpRequest.send().get();
 
     // Instead of throwing an exception, the succeed field of the response object is set to false
     std::cout << "Succeed: " << response.succeed << std::endl;
@@ -189,8 +200,7 @@ int main() {
 In the examples so far, we have used the **"textData"** property of the returning response object.
 However, we need binary data for requests made to binary files such as images. In such cases, 
 we can ensure that the returned data is returned in **"binaryData"** of type 
-***"std::vector&lt;unsigned char&gt;"*** instead of **"textData"** by passing the value **"true"** 
-to the **"returnAsBinary"** parameter.
+***"std::vector&lt;unsigned char&gt;"*** instead of **"textData"** by calling **"returnAsBinary()"** method before send as follow.
 
 ```cpp
 #include <fstream>
@@ -200,10 +210,13 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest("https://api.myproject.com/image/7");
 
-    // If you need to retrieve binary data such as an image, just pass the "returnAsBinary" parameter as true
-    auto response = httpClient.getRequest("https://api.myproject.com/image/7", true).get();
+    // If you need to retrieve binary data such as an image, just call the "returnAsBinary" method before send
+    auto response = httpRequest
+            .returnAsBinary()
+            .send()
+            .get();
     
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -218,8 +231,7 @@ int main() {
 
 ## Sending custom HTTP headers
 
-If you need to send custom HTTP HEADERs during the request, you can send them in 
-std::map<std::string, std::string> format.
+If you need to send custom HTTP HEADERs during the request, you can add them to the request as key-value pairs with **"addHeader()"** method.
 
 ```cpp
 #include <fstream>
@@ -229,16 +241,15 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest("https://api.myproject.com");
 
-    // You can send custom headers in a string/string map
-    auto headers = std::map<std::string, std::string>();
-
-    headers["Custom-Header1"] = "value1";
-    headers["Custom-Header2"] = "value2";
-
-    auto response = httpClient.getRequest("https://api.myproject.com?param1=7&param2=test", headers).get();
-
+    // You can send custom headers as key-value pairs
+    auto response = httpRequest
+            .addHeader("Custom-Header1", "value1")
+            .addHeader("Custom-Header2", "value2")
+            .send()
+            .get();
+    
     std::cout << "Succeed: " << response.succeed << std::endl;
 
     return 0;
@@ -248,8 +259,7 @@ int main() {
 
 ## POST request with form data
 
-Next is submitting form data via HTTP POST. All you have to do is use **"postRequest"** instead 
-of **"getRequest"**. You can pass the form data to the **"payload"** variable as seen in the sample code below.
+Next is submitting form data via HTTP POST. All you have to do is use **"setMethod"** to change HTTP method type. You can pass the form data with **"setPaylod"** method as seen in the sample code below.
 
 ```cpp
 #include <fstream>
@@ -259,12 +269,14 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest("https://api.myproject.com");
 
     // You can send a POST request with form data in the payload
-    std::string payload = "param1=7&param2=test";
-
-    auto response = httpClient.postRequest("https://api.myproject.com", payload).get();
+    auto response = httpRequest
+            .setMethod(HttpMethod::POST)
+            .setPayload("param1=7&param2=test")
+            .send()
+            .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -288,16 +300,15 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
-
-    std::string payload = R"({"param1": 7, "param2": "test"})";
-
+    HttpRequest httpRequest("https://api.myproject.com");
+    
     // You need to send the "Content-Type" as "application/json" in the HTTP Header, if you need to send json data in the payload
-    auto headers = std::map<std::string, std::string>();
-
-    headers["Content-Type"] = "application/json";
-
-    auto response = httpClient.postRequest("https://api.myproject.com", payload, headers).get();
+    auto response = httpRequest
+            .setMethod(HttpMethod::POST)
+            .setPayload(R"({"param1": 7, "param2": "test"})")
+            .addHeader("Content-Type", "application/json")
+            .send()
+            .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -320,13 +331,26 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
+    HttpRequest httpRequest1("https://api.myproject.com");
 
-    std::string payload = "param1=7&param2=test";
+    auto future1 = httpRequest
+            .setMethod(HttpMethod::PUT)
+            .setPayload("param1=7&param2=test")
+            .send();
+    
+    HttpRequest httpRequest2("https://api.myproject.com");
 
-    auto future1 = httpClient.putRequest("https://api.myproject.com", payload);
-    auto future2 = httpClient.deleteRequest("https://api.myproject.com", payload);
-    auto future3 = httpClient.patchRequest("https://api.myproject.com?param1=7&param2=test");
+    auto future2 = httpRequest
+            .setMethod(HttpMethod::DELETE_)
+            .setPayload("param1=7&param2=test")
+            .send();
+    
+    HttpRequest httpRequest3("https://api.myproject.com");
+    
+    auto future3 = httpRequest
+            .setMethod(HttpMethod::PATCH)
+            .setQueryString("param1=7&param2=test")
+            .send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -339,9 +363,8 @@ int main() {
 
 ## How to ignore SSL certificate errors?
 
-If you need to ignore SSL certificate errors for any valid reason, you can continue
-working by passing **"true"** value  to the **"ignoreSslErrors"** variable of the
-HttpClient class.
+If you need to ignore SSL certificate errors for any valid reason, you can call "ignoreSslErrors" 
+method before sending the request.
 
 ```cpp
 #include <fstream>
@@ -351,12 +374,13 @@ using namespace lklibs;
 
 int main() {
     
-    HttpClient httpClient;
-    
-    // If you need to ignore SSL errors, you can set the "ignoreSslErrors" field to true
-    httpClient.ignoreSslErrors = true;
+    HttpRequest httpRequest("https://api.myinvalidssl.com");
 
-    auto response = httpClient.getRequest("https://api.myinvalidssl.com").get();
+    // If you need to ignore SSL errors, you can call "ignoreSslErrors" method before sending the request
+    auto response = httpRequest
+            .ignoreSslErrors()
+            .send()
+            .get();
 
     return 0;
 }
@@ -381,58 +405,21 @@ section to the documentation.
 
 ## Full function list
 
-You can find the complete list of functions in the library below. In fact, they are just 
-overloaded versions of 5 functions in total.
+You can find the complete list of functions in the library below. Since all methods except 
+send return the class itself, so they can be added one after the other like a chain.
 
 > [!TIP]
 > All methods and parameters descriptions are also available within the code as comment for IDEs.
 
 ```cpp
-- getRequest
-    - std::future<HttpResult> getRequest(const std::string &url)
-    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
+- HttpRequest &setMethod(const HttpMethod &method) noexcept
+- HttpRequest &setQueryString(const std::string &queryString) noexcept
+- HttpRequest &setPayload(const std::string &payload) noexcept
+- HttpRequest &returnAsBinary() noexcept
+- HttpRequest &ignoreSslErrors() noexcept
+- HttpRequest &addHeader(const std::string &key, const std::string &value) noexcept
+- std::future<HttpResult> send() noexcept
 
-
-- postRequest
-    - std::future<HttpResult> postRequest(const std::string &url)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload)
-    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-
-
-- putRequest
-    - std::future<HttpResult> putRequest(const std::string &url)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload)
-    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-
-
-- deleteRequest
-    - std::future<HttpResult> deleteRequest(const std::string &url)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload)
-    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers)
-
-
-- patchRequest
-    - std::future<HttpResult> patchRequest(const std::string &url)
-    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary)
-    - std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers)
-    - std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers)
 ```
 
 
