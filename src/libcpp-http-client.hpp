@@ -89,24 +89,24 @@ namespace lklibs {
     };
 
     /**
-     * @brief HTTP client class that makes asynchronous HTTP requests
+     * @brief HTTP request class that makes asynchronous HTTP calls
      */
-    class HttpClient {
+    class HttpRequest {
     public:
 
         /**
-         * @brief Constructor for the HttpClient class
+         * @brief Constructor for the HttpRequest class
          *
          * @param url: URL for the request
          */
-        explicit HttpClient(const std::string &url) {
+        explicit HttpRequest(const std::string &url) {
 
             this->url = url;
 
             curl_global_init(CURL_GLOBAL_DEFAULT);
         }
 
-        ~HttpClient() {
+        ~HttpRequest() {
             curl_global_cleanup();
         }
 
@@ -115,7 +115,7 @@ namespace lklibs {
          *
          * @param method: HTTP method to be used for the request
          */
-        HttpClient &setMethod(const HttpMethod &method) {
+        HttpRequest &setMethod(const HttpMethod &method) {
 
             this->method = [method] {
                 switch (method) {
@@ -142,7 +142,7 @@ namespace lklibs {
          *
          * @param queryString: Query string to be sent with the request
          */
-        HttpClient &setQueryString(const std::string &queryString) {
+        HttpRequest &setQueryString(const std::string &queryString) {
 
             if (this->url.find('?') != std::string::npos) {
 
@@ -163,7 +163,7 @@ namespace lklibs {
          *
          * @param payload: Payload to be sent with the request
          */
-        HttpClient &setPayload(const std::string &payload) {
+        HttpRequest &setPayload(const std::string &payload) {
 
             this->payload = payload;
 
@@ -173,7 +173,7 @@ namespace lklibs {
         /**
          * @brief Set the return format for the request as binary
          */
-        HttpClient &returnAsBinary() {
+        HttpRequest &returnAsBinary() {
 
             this->returnFormat = ReturnFormat::BINARY;
 
@@ -183,7 +183,7 @@ namespace lklibs {
         /**
          * @brief Ignore SSL errors when making HTTP requests
          */
-        HttpClient &ignoreSslErrors() {
+        HttpRequest &ignoreSslErrors() {
 
             this->sslErrorsWillBeIgnored = true;
 
@@ -196,7 +196,7 @@ namespace lklibs {
          * @param key: Header key
          * @param value: Header value
          */
-        HttpClient &addHeader(const std::string &key, const std::string &value) {
+        HttpRequest &addHeader(const std::string &key, const std::string &value) {
 
             this->headers[key] = value;
 

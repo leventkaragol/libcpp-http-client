@@ -7,9 +7,9 @@ using json = nlohmann::json;
 
 TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient("https://httpbun.com/get");
+    HttpRequest httpRequest("https://httpbun.com/get");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setQueryString("param1=7&param2=test")
             .send()
             .get();
@@ -29,13 +29,13 @@ TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
 TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient1("https://httpbun.com/get");
-    HttpClient httpClient2("https://httpbun.com/get");
-    HttpClient httpClient3("https://httpbun.com/get");
+    HttpRequest httpRequest1("https://httpbun.com/get");
+    HttpRequest httpRequest2("https://httpbun.com/get");
+    HttpRequest httpRequest3("https://httpbun.com/get");
 
-    auto future1 = httpClient1.setQueryString("param1=1&param2=test1").send();
-    auto future2 = httpClient2.setQueryString("param1=2&param2=test2").send();
-    auto future3 = httpClient3.setQueryString("param1=3&param2=test3").send();
+    auto future1 = httpRequest1.setQueryString("param1=1&param2=test1").send();
+    auto future2 = httpRequest2.setQueryString("param1=2&param2=test2").send();
+    auto future3 = httpRequest3.setQueryString("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -78,9 +78,9 @@ TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlocking
 
 TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient("https://httpbun.com/bytes/100");
+    HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
-    auto response = httpClient
+    auto response = httpRequest
             .returnAsBinary()
             .send()
             .get();
@@ -94,9 +94,9 @@ TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient("https://httpbun.com/not_found");
+    HttpRequest httpRequest("https://httpbun.com/not_found");
 
-    auto response = httpClient.send().get();
+    auto response = httpRequest.send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -105,9 +105,9 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMade
 
 TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForAnotherError) {
 
-    HttpClient httpClient("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer");
 
-    auto response = httpClient.send().get();
+    auto response = httpRequest.send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -116,9 +116,9 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForA
 
 TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest) {
 
-    HttpClient httpClient("https://httpbun.com/get");
+    HttpRequest httpRequest("https://httpbun.com/get");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setQueryString("param1=7&param2=test")
             .addHeader("Custom-Header1", "value1")
             .addHeader("Custom-Header2", "value2")
@@ -143,9 +143,9 @@ TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest) {
 
 TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient("https://httpbun.com/post");
+    HttpRequest httpRequest("https://httpbun.com/post");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::POST)
             .setPayload("param1=7&param2=test")
             .send()
@@ -166,13 +166,13 @@ TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm) 
 
 TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient1("https://httpbun.com/post");
-    HttpClient httpClient2("https://httpbun.com/post");
-    HttpClient httpClient3("https://httpbun.com/post");
+    HttpRequest httpRequest1("https://httpbun.com/post");
+    HttpRequest httpRequest2("https://httpbun.com/post");
+    HttpRequest httpRequest3("https://httpbun.com/post");
 
-    auto future1 = httpClient1.setMethod(HttpMethod::POST).setPayload("param1=1&param2=test1").send();
-    auto future2 = httpClient2.setMethod(HttpMethod::POST).setPayload("param1=2&param2=test2").send();
-    auto future3 = httpClient3.setMethod(HttpMethod::POST).setPayload("param1=3&param2=test3").send();
+    auto future1 = httpRequest1.setMethod(HttpMethod::POST).setPayload("param1=1&param2=test1").send();
+    auto future2 = httpRequest2.setMethod(HttpMethod::POST).setPayload("param1=2&param2=test2").send();
+    auto future3 = httpRequest3.setMethod(HttpMethod::POST).setPayload("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -215,9 +215,9 @@ TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlocki
 
 TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient("https://httpbun.com/bytes/100");
+    HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::POST)
             .returnAsBinary()
             .send()
@@ -232,9 +232,9 @@ TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient("https://httpbun.com/not_found");
+    HttpRequest httpRequest("https://httpbun.com/not_found");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::POST)
             .send()
             .get();
@@ -246,9 +246,9 @@ TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMa
 
 TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestForAnotherError) {
 
-    HttpClient httpClient("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::POST)
             .send()
             .get();
@@ -260,9 +260,9 @@ TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestFo
 
 TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest) {
 
-    HttpClient httpClient("https://httpbun.com/post");
+    HttpRequest httpRequest("https://httpbun.com/post");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::POST)
             .setPayload(R"({"param1": 7, "param2": "test"})")
             .addHeader("Content-Type", "application/json")
@@ -290,9 +290,9 @@ TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest) {
 
 TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient("https://httpbun.com/put");
+    HttpRequest httpRequest("https://httpbun.com/put");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PUT)
             .setPayload("param1=7&param2=test")
             .send()
@@ -313,13 +313,13 @@ TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
 TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient1("https://httpbun.com/put");
-    HttpClient httpClient2("https://httpbun.com/put");
-    HttpClient httpClient3("https://httpbun.com/put");
+    HttpRequest httpRequest1("https://httpbun.com/put");
+    HttpRequest httpRequest2("https://httpbun.com/put");
+    HttpRequest httpRequest3("https://httpbun.com/put");
 
-    auto future1 = httpClient1.setMethod(HttpMethod::PUT).setPayload("param1=1&param2=test1").send();
-    auto future2 = httpClient2.setMethod(HttpMethod::PUT).setPayload("param1=2&param2=test2").send();
-    auto future3 = httpClient3.setMethod(HttpMethod::PUT).setPayload("param1=3&param2=test3").send();
+    auto future1 = httpRequest1.setMethod(HttpMethod::PUT).setPayload("param1=1&param2=test1").send();
+    auto future2 = httpRequest2.setMethod(HttpMethod::PUT).setPayload("param1=2&param2=test2").send();
+    auto future3 = httpRequest3.setMethod(HttpMethod::PUT).setPayload("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -362,9 +362,9 @@ TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlocking
 
 TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient("https://httpbun.com/bytes/100");
+    HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PUT)
             .returnAsBinary()
             .send()
@@ -379,9 +379,9 @@ TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient("https://httpbun.com/not_found");
+    HttpRequest httpRequest("https://httpbun.com/not_found");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PUT)
             .send()
             .get();
@@ -393,9 +393,9 @@ TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMade
 
 TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForAnotherError) {
 
-    HttpClient httpClient("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PUT)
             .send()
             .get();
@@ -407,9 +407,9 @@ TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForA
 
 TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest) {
 
-    HttpClient httpClient("https://httpbun.com/put");
+    HttpRequest httpRequest("https://httpbun.com/put");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PUT)
             .setPayload(R"({"param1": 7, "param2": "test"})")
             .addHeader("Content-Type", "application/json")
@@ -437,9 +437,9 @@ TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest) {
 
 TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient("https://httpbun.com/delete");
+    HttpRequest httpRequest("https://httpbun.com/delete");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::DELETE_)
             .setPayload("param1=7&param2=test")
             .send()
@@ -460,13 +460,13 @@ TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestFo
 
 TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient1("https://httpbun.com/delete");
-    HttpClient httpClient2("https://httpbun.com/delete");
-    HttpClient httpClient3("https://httpbun.com/delete");
+    HttpRequest httpRequest1("https://httpbun.com/delete");
+    HttpRequest httpRequest2("https://httpbun.com/delete");
+    HttpRequest httpRequest3("https://httpbun.com/delete");
 
-    auto future1 = httpClient1.setMethod(HttpMethod::DELETE_).setPayload("param1=1&param2=test1").send();
-    auto future2 = httpClient2.setMethod(HttpMethod::DELETE_).setPayload("param1=2&param2=test2").send();
-    auto future3 = httpClient3.setMethod(HttpMethod::DELETE_).setPayload("param1=3&param2=test3").send();
+    auto future1 = httpRequest1.setMethod(HttpMethod::DELETE_).setPayload("param1=1&param2=test1").send();
+    auto future2 = httpRequest2.setMethod(HttpMethod::DELETE_).setPayload("param1=2&param2=test2").send();
+    auto future3 = httpRequest3.setMethod(HttpMethod::DELETE_).setPayload("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -509,9 +509,9 @@ TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBl
 
 TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient("https://httpbun.com/bytes/100");
+    HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::DELETE_)
             .returnAsBinary()
             .send()
@@ -526,9 +526,9 @@ TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient("https://httpbun.com/not_found");
+    HttpRequest httpRequest("https://httpbun.com/not_found");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::DELETE_)
             .send()
             .get();
@@ -540,9 +540,9 @@ TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteReque
 
 TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestForAnotherError) {
 
-    HttpClient httpClient("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::DELETE_)
             .send()
             .get();
@@ -554,9 +554,9 @@ TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteReque
 
 TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest) {
 
-    HttpClient httpClient("https://httpbun.com/delete");
+    HttpRequest httpRequest("https://httpbun.com/delete");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::DELETE_)
             .setPayload(R"({"param1": 7, "param2": "test"})")
             .addHeader("Content-Type", "application/json")
@@ -585,9 +585,9 @@ TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest) {
 
 TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient("https://httpbun.com/patch");
+    HttpRequest httpRequest("https://httpbun.com/patch");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PATCH)
             .setQueryString("param1=7&param2=test")
             .send()
@@ -608,13 +608,13 @@ TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm
 
 TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient1("https://httpbun.com/patch");
-    HttpClient httpClient2("https://httpbun.com/patch");
-    HttpClient httpClient3("https://httpbun.com/patch");
+    HttpRequest httpRequest1("https://httpbun.com/patch");
+    HttpRequest httpRequest2("https://httpbun.com/patch");
+    HttpRequest httpRequest3("https://httpbun.com/patch");
 
-    auto future1 = httpClient1.setMethod(HttpMethod::PATCH).setQueryString("param1=1&param2=test1").send();
-    auto future2 = httpClient2.setMethod(HttpMethod::PATCH).setQueryString("param1=2&param2=test2").send();
-    auto future3 = httpClient3.setMethod(HttpMethod::PATCH).setQueryString("param1=3&param2=test3").send();
+    auto future1 = httpRequest1.setMethod(HttpMethod::PATCH).setQueryString("param1=1&param2=test1").send();
+    auto future2 = httpRequest2.setMethod(HttpMethod::PATCH).setQueryString("param1=2&param2=test2").send();
+    auto future3 = httpRequest3.setMethod(HttpMethod::PATCH).setQueryString("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -657,9 +657,9 @@ TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBloc
 
 TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient("https://httpbun.com/bytes/100");
+    HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PATCH)
             .returnAsBinary()
             .send()
@@ -674,9 +674,9 @@ TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient("https://httpbun.com/not_found");
+    HttpRequest httpRequest("https://httpbun.com/not_found");
 
-    auto response = httpClient.setMethod(HttpMethod::PATCH).send().get();
+    auto response = httpRequest.setMethod(HttpMethod::PATCH).send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -685,9 +685,9 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
 
 TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestForAnotherError) {
 
-    HttpClient httpClient("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer");
 
-    auto response = httpClient.setMethod(HttpMethod::PATCH).send().get();
+    auto response = httpRequest.setMethod(HttpMethod::PATCH).send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -696,9 +696,9 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
 
 TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
 
-    HttpClient httpClient("https://httpbun.com/patch");
+    HttpRequest httpRequest("https://httpbun.com/patch");
 
-    auto response = httpClient
+    auto response = httpRequest
             .setMethod(HttpMethod::PATCH)
             .setQueryString("param1=7&param2=test")
             .addHeader("Custom-Header1", "value1")
@@ -724,9 +724,9 @@ TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
 
 TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
 
-    HttpClient httpClient("https://self-signed-cert.httpbun.com");
+    HttpRequest httpRequest("https://self-signed-cert.httpbun.com");
 
-    auto response = httpClient.send().get();
+    auto response = httpRequest.send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 0) << "HTTP Status Code is not 0";
@@ -735,9 +735,9 @@ TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
 
 TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfIgnoreSslErrorsFieldSetTrue) {
 
-    HttpClient httpClient("https://self-signed-cert.httpbun.com");
+    HttpRequest httpRequest("https://self-signed-cert.httpbun.com");
 
-    auto response = httpClient.ignoreSslErrors().send().get();
+    auto response = httpRequest.ignoreSslErrors().send().get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
