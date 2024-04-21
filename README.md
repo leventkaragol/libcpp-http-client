@@ -412,12 +412,12 @@ send return the class itself, so they can be added one after the other like a ch
 > All methods and parameters descriptions are also available within the code as comment for IDEs.
 
 ```cpp
-- HttpRequest &setMethod(const HttpMethod &method)
-- HttpRequest &setQueryString(const std::string &queryString)
-- HttpRequest &setPayload(const std::string &payload)
-- HttpRequest &returnAsBinary()
-- HttpRequest &ignoreSslErrors()
-- HttpRequest &addHeader(const std::string &key, const std::string &value)
+- HttpRequest &setMethod(const HttpMethod &method) noexcept
+- HttpRequest &setQueryString(const std::string &queryString) noexcept
+- HttpRequest &setPayload(const std::string &payload) noexcept
+- HttpRequest &returnAsBinary() noexcept
+- HttpRequest &ignoreSslErrors() noexcept
+- HttpRequest &addHeader(const std::string &key, const std::string &value) noexcept
 - std::future<HttpResult> send() noexcept
 
 ```
