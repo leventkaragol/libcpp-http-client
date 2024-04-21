@@ -1,7 +1,7 @@
 /*
 
 Modern non-blocking HTTP Client library for C++ (17+)
-version 1.1.0
+version 1.2.0
 https://github.com/lk-libs/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/lk-libs/libcpp-http-client/issues
@@ -78,12 +78,31 @@ namespace lklibs {
     };
 
     /**
+     * @brief HTTP Method options for the request
+     */
+    enum class HttpMethod {
+        GET,
+        POST,
+        PUT,
+        DELETE_,
+        PATCH
+    };
+
+    /**
      * @brief HTTP client class that makes asynchronous HTTP requests
      */
     class HttpClient {
     public:
 
-        HttpClient() {
+        /**
+         * @brief Constructor for the HttpClient class
+         *
+         * @param url: URL for the request
+         */
+        explicit HttpClient(const std::string &url) {
+
+            this->url = url;
+
             curl_global_init(CURL_GLOBAL_DEFAULT);
         }
 
@@ -92,411 +111,124 @@ namespace lklibs {
         }
 
         /**
+         * @brief Set the HTTP method for the request
+         *
+         * @param method: HTTP method to be used for the request
+         */
+        HttpClient &setMethod(const HttpMethod &method) {
+
+            this->method = [method] {
+                switch (method) {
+                    case HttpMethod::GET:
+                        return "GET";
+                    case HttpMethod::POST:
+                        return "POST";
+                    case HttpMethod::PUT:
+                        return "PUT";
+                    case HttpMethod::DELETE_:
+                        return "DELETE";
+                    case HttpMethod::PATCH:
+                        return "PATCH";
+                    default:
+                        return "GET";
+                }
+            }();
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the query string for the request
+         *
+         * @param queryString: Query string to be sent with the request
+         */
+        HttpClient &setQueryString(const std::string &queryString) {
+
+            if (this->url.find('?') != std::string::npos) {
+
+                this->url += "&" + queryString;
+
+            } else {
+
+                this->url += "?" + queryString;
+            }
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the payload for the request
+         * You can send form data like param1=7&param2=test or JSON data like {"param1": 7, "param2": "test"}
+         * You need to send the "Content-Type" as "application/json" in the HTTP Header, if you need to send json data in the payload
+         *
+         * @param payload: Payload to be sent with the request
+         */
+        HttpClient &setPayload(const std::string &payload) {
+
+            this->payload = payload;
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the return format for the request as binary
+         */
+        HttpClient &returnAsBinary() {
+
+            this->returnFormat = ReturnFormat::BINARY;
+
+            return *this;
+        }
+
+        /**
          * @brief Ignore SSL errors when making HTTP requests
          */
-        bool ignoreSslErrors = false;
+        HttpClient &ignoreSslErrors() {
 
-        /**
-         * @brief Makes an HTTP GET request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> getRequest(const std::string &url) noexcept {
+            this->sslErrorsWillBeIgnored = true;
 
-            return request(url, "GET", "", false, {});
+            return *this;
         }
 
         /**
-         * @brief Makes an HTTP GET request for the given URL and returns the result
+         * @brief Add a HTTP header to the request
          *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
+         * @param key: Header key
+         * @param value: Header value
          */
-        std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary) noexcept {
+        HttpClient &addHeader(const std::string &key, const std::string &value) {
 
-            return request(url, "GET", "", returnAsBinary, {});
+            this->headers[key] = value;
+
+            return *this;
         }
 
         /**
-         * @brief Makes an HTTP GET request for the given URL and returns the result
+         * @brief Send the HTTP request and return the result as a future
+         * The result can be obtained by calling the get() method of the future
+         * get() method will block until the result is available so it is recommended to use it
+         * when you need the result and no more other http requests will be made as parallel
          *
-         * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
+         * @return Result of the request as a future (see HttpResult object for details)
          */
-        std::future<HttpResult> getRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
+        std::future<HttpResult> send() noexcept {
 
-            return request(url, "GET", "", false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP GET request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> getRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "GET", "", returnAsBinary, headers);
-        }
-
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url) noexcept {
-
-            return request(url, "POST", "", false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, const std::string &payload) noexcept {
-
-            return request(url, "POST", payload, false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary) noexcept {
-
-            return request(url, "POST", "", returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "POST", "", false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary) noexcept {
-
-            return request(url, "POST", payload, returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "POST", payload, false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "POST", "", returnAsBinary, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP POST request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> postRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "POST", payload, returnAsBinary, headers);
-        }
-
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url) noexcept {
-
-            return request(url, "PUT", "", false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, const std::string &payload) noexcept {
-
-            return request(url, "PUT", payload, false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary) noexcept {
-
-            return request(url, "PUT", "", returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "PUT", "", false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary) noexcept {
-
-            return request(url, "PUT", payload, returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "PUT", payload, false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "PUT", "", returnAsBinary, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP PUT request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> putRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "PUT", payload, returnAsBinary, headers);
-        }
-
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url) noexcept {
-
-            return request(url, "DELETE", "", false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload) noexcept {
-
-            return request(url, "DELETE", payload, false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary) noexcept {
-
-            return request(url, "DELETE", "", returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "DELETE", "", false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary) noexcept {
-
-            return request(url, "DELETE", payload, returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "DELETE", payload, false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "DELETE", "", returnAsBinary, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP DELETE request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param payload: Payload to be sent with the request
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> deleteRequest(const std::string &url, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "DELETE", payload, returnAsBinary, headers);
-        }
-
-
-        /**
-         * @brief Makes an HTTP PATCH request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> patchRequest(const std::string &url) noexcept {
-
-            return request(url, "PATCH", "", false, {});
-        }
-
-        /**
-         * @brief Makes an HTTP PATCH request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary) noexcept {
-
-            return request(url, "PATCH", "", returnAsBinary, {});
-        }
-
-        /**
-         * @brief Makes an HTTP PATCH request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> patchRequest(const std::string &url, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "PATCH", "", false, headers);
-        }
-
-        /**
-         * @brief Makes an HTTP PATCH request for the given URL and returns the result
-         *
-         * @param url: Request URL
-         * @param returnAsBinary: Return result as binary instead of string
-         * @param headers: HTTP Header information to be sent when making the request
-         * @return Result of the request (see HttpResult object for details)
-         */
-        std::future<HttpResult> patchRequest(const std::string &url, bool returnAsBinary, const std::map<std::string, std::string> &headers) noexcept {
-
-            return request(url, "PATCH", "", returnAsBinary, headers);
+            return this->sendRequest();
         }
 
     private:
+
+        enum class ReturnFormat {
+            TEXT,
+            BINARY
+        };
+
+        std::string url;
+        std::string method = "GET";
+        std::string payload;
+        bool sslErrorsWillBeIgnored = false;
+        ReturnFormat returnFormat = ReturnFormat::TEXT;
+        std::map<std::string, std::string> headers;
 
         struct CurlDeleter {
 
@@ -520,9 +252,9 @@ namespace lklibs {
             }
         };
 
-        std::future<HttpResult> request(const std::string &url, const std::string &method, const std::string &payload, bool returnAsBinary, const std::map<std::string, std::string> &headers) {
+        std::future<HttpResult> sendRequest() noexcept {
 
-            return std::async(std::launch::async, [this, url, method, payload, returnAsBinary, headers]() -> HttpResult {
+            return std::async(std::launch::async, [this]() -> HttpResult {
 
                 std::unique_ptr<CURL, CurlDeleter> curl(curl_easy_init());
 
@@ -533,7 +265,7 @@ namespace lklibs {
 
                 std::unique_ptr<curl_slist, CurlSlistDeleter> headerList(nullptr);
 
-                for (const auto &header: headers) {
+                for (const auto &header: this->headers) {
 
                     std::string headerStr = header.first + ": " + header.second;
 
@@ -545,17 +277,17 @@ namespace lklibs {
                 int statusCode = 0;
 
                 curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headerList.get());
-                curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
-                curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, method.c_str());
-                curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->ignoreSslErrors ? 0L : 1L);
-                curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->ignoreSslErrors ? 0L : 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_URL, this->url.c_str());
+                curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, this->method.c_str());
+                curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->sslErrorsWillBeIgnored ? 0L : 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->sslErrorsWillBeIgnored ? 0L : 1L);
 
-                if (!payload.empty()) {
+                if (!this->payload.empty()) {
 
-                    curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, payload.c_str());
+                    curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, this->payload.c_str());
                 }
 
-                if (returnAsBinary) {
+                if (this->returnFormat == ReturnFormat::BINARY) {
 
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, binaryWriteCallback);
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &binaryBuffer);

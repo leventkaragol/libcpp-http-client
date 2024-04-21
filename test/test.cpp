@@ -7,9 +7,12 @@ using json = nlohmann::json;
 
 TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/get");
 
-    auto response = httpClient.getRequest("https://httpbun.com/get?param1=7&param2=test").get();
+    auto response = httpClient
+            .setQueryString("param1=7&param2=test")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -26,11 +29,13 @@ TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
 TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient;
+    HttpClient httpClient1("https://httpbun.com/get");
+    HttpClient httpClient2("https://httpbun.com/get");
+    HttpClient httpClient3("https://httpbun.com/get");
 
-    auto future1 = httpClient.getRequest("https://httpbun.com/get?param1=1&param2=test1");
-    auto future2 = httpClient.getRequest("https://httpbun.com/get?param1=2&param2=test2");
-    auto future3 = httpClient.getRequest("https://httpbun.com/get?param1=3&param2=test3");
+    auto future1 = httpClient1.setQueryString("param1=1&param2=test1").send();
+    auto future2 = httpClient2.setQueryString("param1=2&param2=test2").send();
+    auto future3 = httpClient3.setQueryString("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -73,9 +78,12 @@ TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlocking
 
 TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bytes/100");
 
-    auto response = httpClient.getRequest("https://httpbun.com/bytes/100", true).get();
+    auto response = httpClient
+            .returnAsBinary()
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -86,9 +94,9 @@ TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/not_found");
 
-    auto response = httpClient.getRequest("https://httpbun.com/not_found").get();
+    auto response = httpClient.send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -97,9 +105,9 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMade
 
 TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForAnotherError) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bearer");
 
-    auto response = httpClient.getRequest("https://httpbun.com/bearer").get();
+    auto response = httpClient.send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -108,14 +116,14 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForA
 
 TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest) {
 
-    auto headers = std::map<std::string, std::string>();
+    HttpClient httpClient("https://httpbun.com/get");
 
-    headers["Custom-Header1"] = "value1";
-    headers["Custom-Header2"] = "value2";
-
-    HttpClient httpClient;
-
-    auto response = httpClient.getRequest("https://httpbun.com/get?param1=7&param2=test", headers).get();
+    auto response = httpClient
+            .setQueryString("param1=7&param2=test")
+            .addHeader("Custom-Header1", "value1")
+            .addHeader("Custom-Header2", "value2")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -135,11 +143,13 @@ TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest) {
 
 TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    std::string payload = "param1=7&param2=test";
+    HttpClient httpClient("https://httpbun.com/post");
 
-    HttpClient httpClient;
-
-    auto response = httpClient.postRequest("https://httpbun.com/post", payload).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::POST)
+            .setPayload("param1=7&param2=test")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -156,15 +166,13 @@ TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm) 
 
 TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    std::string payload1 = "param1=1&param2=test1";
-    std::string payload2 = "param1=2&param2=test2";
-    std::string payload3 = "param1=3&param2=test3";
+    HttpClient httpClient1("https://httpbun.com/post");
+    HttpClient httpClient2("https://httpbun.com/post");
+    HttpClient httpClient3("https://httpbun.com/post");
 
-    HttpClient httpClient;
-
-    auto future1 = httpClient.postRequest("https://httpbun.com/post", payload1);
-    auto future2 = httpClient.postRequest("https://httpbun.com/post", payload2);
-    auto future3 = httpClient.postRequest("https://httpbun.com/post", payload3);
+    auto future1 = httpClient1.setMethod(HttpMethod::POST).setPayload("param1=1&param2=test1").send();
+    auto future2 = httpClient2.setMethod(HttpMethod::POST).setPayload("param1=2&param2=test2").send();
+    auto future3 = httpClient3.setMethod(HttpMethod::POST).setPayload("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -207,9 +215,13 @@ TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlocki
 
 TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bytes/100");
 
-    auto response = httpClient.postRequest("https://httpbun.com/bytes/100", true).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::POST)
+            .returnAsBinary()
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -220,9 +232,12 @@ TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/not_found");
 
-    auto response = httpClient.postRequest("https://httpbun.com/not_found").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::POST)
+            .send()
+            .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -231,9 +246,12 @@ TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMa
 
 TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestForAnotherError) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bearer");
 
-    auto response = httpClient.postRequest("https://httpbun.com/bearer").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::POST)
+            .send()
+            .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -242,17 +260,16 @@ TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestFo
 
 TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest) {
 
-    std::string payload = R"({"param1": 7, "param2": "test"})";
+    HttpClient httpClient("https://httpbun.com/post");
 
-    auto headers = std::map<std::string, std::string>();
-
-    headers["Content-Type"] = "application/json";
-    headers["Custom-Header1"] = "value1";
-    headers["Custom-Header2"] = "value2";
-
-    HttpClient httpClient;
-
-    auto response = httpClient.postRequest("https://httpbun.com/post", payload, headers).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::POST)
+            .setPayload(R"({"param1": 7, "param2": "test"})")
+            .addHeader("Content-Type", "application/json")
+            .addHeader("Custom-Header1", "value1")
+            .addHeader("Custom-Header2", "value2")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -273,11 +290,13 @@ TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest) {
 
 TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    std::string payload = "param1=7&param2=test";
+    HttpClient httpClient("https://httpbun.com/put");
 
-    HttpClient httpClient;
-
-    auto response = httpClient.putRequest("https://httpbun.com/put", payload).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PUT)
+            .setPayload("param1=7&param2=test")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -294,15 +313,13 @@ TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
 TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    std::string payload1 = "param1=1&param2=test1";
-    std::string payload2 = "param1=2&param2=test2";
-    std::string payload3 = "param1=3&param2=test3";
+    HttpClient httpClient1("https://httpbun.com/put");
+    HttpClient httpClient2("https://httpbun.com/put");
+    HttpClient httpClient3("https://httpbun.com/put");
 
-    HttpClient httpClient;
-
-    auto future1 = httpClient.putRequest("https://httpbun.com/put", payload1);
-    auto future2 = httpClient.putRequest("https://httpbun.com/put", payload2);
-    auto future3 = httpClient.putRequest("https://httpbun.com/put", payload3);
+    auto future1 = httpClient1.setMethod(HttpMethod::PUT).setPayload("param1=1&param2=test1").send();
+    auto future2 = httpClient2.setMethod(HttpMethod::PUT).setPayload("param1=2&param2=test2").send();
+    auto future3 = httpClient3.setMethod(HttpMethod::PUT).setPayload("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -345,9 +362,13 @@ TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlocking
 
 TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bytes/100");
 
-    auto response = httpClient.putRequest("https://httpbun.com/bytes/100", true).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PUT)
+            .returnAsBinary()
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -358,9 +379,12 @@ TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/not_found");
 
-    auto response = httpClient.putRequest("https://httpbun.com/not_found").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PUT)
+            .send()
+            .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -369,9 +393,12 @@ TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMade
 
 TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForAnotherError) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bearer");
 
-    auto response = httpClient.putRequest("https://httpbun.com/bearer").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PUT)
+            .send()
+            .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -380,17 +407,16 @@ TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForA
 
 TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest) {
 
-    std::string payload = R"({"param1": 7, "param2": "test"})";
+    HttpClient httpClient("https://httpbun.com/put");
 
-    auto headers = std::map<std::string, std::string>();
-
-    headers["Content-Type"] = "application/json";
-    headers["Custom-Header1"] = "value1";
-    headers["Custom-Header2"] = "value2";
-
-    HttpClient httpClient;
-
-    auto response = httpClient.putRequest("https://httpbun.com/put", payload, headers).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PUT)
+            .setPayload(R"({"param1": 7, "param2": "test"})")
+            .addHeader("Content-Type", "application/json")
+            .addHeader("Custom-Header1", "value1")
+            .addHeader("Custom-Header2", "value2")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -411,11 +437,13 @@ TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest) {
 
 TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    std::string payload = "param1=7&param2=test";
+    HttpClient httpClient("https://httpbun.com/delete");
 
-    HttpClient httpClient;
-
-    auto response = httpClient.deleteRequest("https://httpbun.com/delete", payload).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::DELETE_)
+            .setPayload("param1=7&param2=test")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -432,15 +460,13 @@ TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestFo
 
 TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    std::string payload1 = "param1=1&param2=test1";
-    std::string payload2 = "param1=2&param2=test2";
-    std::string payload3 = "param1=3&param2=test3";
+    HttpClient httpClient1("https://httpbun.com/delete");
+    HttpClient httpClient2("https://httpbun.com/delete");
+    HttpClient httpClient3("https://httpbun.com/delete");
 
-    HttpClient httpClient;
-
-    auto future1 = httpClient.deleteRequest("https://httpbun.com/delete", payload1);
-    auto future2 = httpClient.deleteRequest("https://httpbun.com/delete", payload2);
-    auto future3 = httpClient.deleteRequest("https://httpbun.com/delete", payload3);
+    auto future1 = httpClient1.setMethod(HttpMethod::DELETE_).setPayload("param1=1&param2=test1").send();
+    auto future2 = httpClient2.setMethod(HttpMethod::DELETE_).setPayload("param1=2&param2=test2").send();
+    auto future3 = httpClient3.setMethod(HttpMethod::DELETE_).setPayload("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -483,9 +509,13 @@ TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBl
 
 TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bytes/100");
 
-    auto response = httpClient.deleteRequest("https://httpbun.com/bytes/100", true).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::DELETE_)
+            .returnAsBinary()
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -496,9 +526,12 @@ TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/not_found");
 
-    auto response = httpClient.deleteRequest("https://httpbun.com/not_found").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::DELETE_)
+            .send()
+            .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -507,9 +540,12 @@ TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteReque
 
 TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestForAnotherError) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bearer");
 
-    auto response = httpClient.deleteRequest("https://httpbun.com/bearer").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::DELETE_)
+            .send()
+            .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -518,17 +554,16 @@ TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteReque
 
 TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest) {
 
-    std::string payload = R"({"param1": 7, "param2": "test"})";
+    HttpClient httpClient("https://httpbun.com/delete");
 
-    auto headers = std::map<std::string, std::string>();
-
-    headers["Content-Type"] = "application/json";
-    headers["Custom-Header1"] = "value1";
-    headers["Custom-Header2"] = "value2";
-
-    HttpClient httpClient;
-
-    auto response = httpClient.deleteRequest("https://httpbun.com/delete", payload, headers).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::DELETE_)
+            .setPayload(R"({"param1": 7, "param2": "test"})")
+            .addHeader("Content-Type", "application/json")
+            .addHeader("Custom-Header1", "value1")
+            .addHeader("Custom-Header2", "value2")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -547,11 +582,16 @@ TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest) {
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
+
 TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/patch");
 
-    auto response = httpClient.patchRequest("https://httpbun.com/patch?param1=7&param2=test").get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PATCH)
+            .setQueryString("param1=7&param2=test")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -568,11 +608,13 @@ TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm
 
 TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
 
-    HttpClient httpClient;
+    HttpClient httpClient1("https://httpbun.com/patch");
+    HttpClient httpClient2("https://httpbun.com/patch");
+    HttpClient httpClient3("https://httpbun.com/patch");
 
-    auto future1 = httpClient.patchRequest("https://httpbun.com/patch?param1=1&param2=test1");
-    auto future2 = httpClient.patchRequest("https://httpbun.com/patch?param1=2&param2=test2");
-    auto future3 = httpClient.patchRequest("https://httpbun.com/patch?param1=3&param2=test3");
+    auto future1 = httpClient1.setMethod(HttpMethod::PATCH).setQueryString("param1=1&param2=test1").send();
+    auto future2 = httpClient2.setMethod(HttpMethod::PATCH).setQueryString("param1=2&param2=test2").send();
+    auto future3 = httpClient3.setMethod(HttpMethod::PATCH).setQueryString("param1=3&param2=test3").send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -615,9 +657,13 @@ TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBloc
 
 TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bytes/100");
 
-    auto response = httpClient.patchRequest("https://httpbun.com/bytes/100", true).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PATCH)
+            .returnAsBinary()
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -628,9 +674,9 @@ TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat) {
 
 TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestMadeToAnInvalidAddress) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/not_found");
 
-    auto response = httpClient.patchRequest("https://httpbun.com/not_found").get();
+    auto response = httpClient.setMethod(HttpMethod::PATCH).send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
@@ -639,9 +685,9 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
 
 TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestForAnotherError) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://httpbun.com/bearer");
 
-    auto response = httpClient.patchRequest("https://httpbun.com/bearer").get();
+    auto response = httpClient.setMethod(HttpMethod::PATCH).send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
@@ -650,15 +696,15 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
 
 TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
 
-    auto headers = std::map<std::string, std::string>();
+    HttpClient httpClient("https://httpbun.com/patch");
 
-    headers["Content-Type"] = "application/json";
-    headers["Custom-Header1"] = "value1";
-    headers["Custom-Header2"] = "value2";
-
-    HttpClient httpClient;
-
-    auto response = httpClient.patchRequest("https://httpbun.com/patch?param1=7&param2=test", headers).get();
+    auto response = httpClient
+            .setMethod(HttpMethod::PATCH)
+            .setQueryString("param1=7&param2=test")
+            .addHeader("Custom-Header1", "value1")
+            .addHeader("Custom-Header2", "value2")
+            .send()
+            .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -672,16 +718,15 @@ TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
     ASSERT_EQ(data["args"]["param1"], "7") << "Querystring is invalid";
     ASSERT_EQ(data["args"]["param2"], "test") << "Querystring is invalid";
 
-    ASSERT_EQ(data["headers"]["Content-Type"], "application/json") << "Content-Type is invalid";
     ASSERT_EQ(data["headers"]["Custom-Header1"], "value1") << "Custom-Header1 is invalid";
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
 TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://self-signed-cert.httpbun.com");
 
-    auto response = httpClient.getRequest("https://self-signed-cert.httpbun.com").get();
+    auto response = httpClient.send().get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 0) << "HTTP Status Code is not 0";
@@ -690,11 +735,9 @@ TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
 
 TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfIgnoreSslErrorsFieldSetTrue) {
 
-    HttpClient httpClient;
+    HttpClient httpClient("https://self-signed-cert.httpbun.com");
 
-    httpClient.ignoreSslErrors = true;
-
-    auto response = httpClient.getRequest("https://self-signed-cert.httpbun.com").get();
+    auto response = httpClient.ignoreSslErrors().send().get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
