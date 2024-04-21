@@ -115,24 +115,9 @@ namespace lklibs {
          *
          * @param method: HTTP method to be used for the request
          */
-        HttpRequest &setMethod(const HttpMethod &method) {
+        HttpRequest &setMethod(const HttpMethod &method) noexcept {
 
-            this->method = [method] {
-                switch (method) {
-                    case HttpMethod::GET:
-                        return "GET";
-                    case HttpMethod::POST:
-                        return "POST";
-                    case HttpMethod::PUT:
-                        return "PUT";
-                    case HttpMethod::DELETE_:
-                        return "DELETE";
-                    case HttpMethod::PATCH:
-                        return "PATCH";
-                    default:
-                        return "GET";
-                }
-            }();
+            this->method = HttpMethodStrings[static_cast<int>(method)];
 
             return *this;
         }
@@ -142,7 +127,7 @@ namespace lklibs {
          *
          * @param queryString: Query string to be sent with the request
          */
-        HttpRequest &setQueryString(const std::string &queryString) {
+        HttpRequest &setQueryString(const std::string &queryString) noexcept {
 
             if (this->url.find('?') != std::string::npos) {
 
@@ -163,7 +148,7 @@ namespace lklibs {
          *
          * @param payload: Payload to be sent with the request
          */
-        HttpRequest &setPayload(const std::string &payload) {
+        HttpRequest &setPayload(const std::string &payload) noexcept {
 
             this->payload = payload;
 
@@ -173,7 +158,7 @@ namespace lklibs {
         /**
          * @brief Set the return format for the request as binary
          */
-        HttpRequest &returnAsBinary() {
+        HttpRequest &returnAsBinary() noexcept {
 
             this->returnFormat = ReturnFormat::BINARY;
 
@@ -183,7 +168,7 @@ namespace lklibs {
         /**
          * @brief Ignore SSL errors when making HTTP requests
          */
-        HttpRequest &ignoreSslErrors() {
+        HttpRequest &ignoreSslErrors() noexcept {
 
             this->sslErrorsWillBeIgnored = true;
 
@@ -196,7 +181,7 @@ namespace lklibs {
          * @param key: Header key
          * @param value: Header value
          */
-        HttpRequest &addHeader(const std::string &key, const std::string &value) {
+        HttpRequest &addHeader(const std::string &key, const std::string &value) noexcept {
 
             this->headers[key] = value;
 
@@ -221,6 +206,14 @@ namespace lklibs {
         enum class ReturnFormat {
             TEXT,
             BINARY
+        };
+
+        const char* HttpMethodStrings[5] = {
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "PATCH"
         };
 
         std::string url;
