@@ -59,7 +59,7 @@ target_link_libraries(myProject PRIVATE libcpp-http-client CURL::libcurl)
 Below you can see the simplest use case sending QueryString parameters to an API via HTTP GET.
 
 > [!IMPORTANT]
-> Please do not use it this way, if more than one call will be made . You do not use the non-blocking
+> Please do not use it this way, if more than one call will be made. You do not use the non-blocking
 > feature in this way. Just keep reading...
 
 ```cpp
@@ -155,7 +155,7 @@ int main() {
 }
 ```
 
-All functions in the library return a future and allow the next line to run without blocking the flow.
+**"send"** function in the library return a future and allow the next line to run without blocking the flow.
 
 
 ## What does exception free mean?
@@ -200,8 +200,7 @@ int main() {
 In the examples so far, we have used the **"textData"** property of the returning response object.
 However, we need binary data for requests made to binary files such as images. In such cases, 
 we can ensure that the returned data is returned in **"binaryData"** of type 
-***"std::vector&lt;unsigned char&gt;"*** instead of **"textData"** by passing the value **"true"** 
-to the **"returnAsBinary"** parameter.
+***"std::vector&lt;unsigned char&gt;"*** instead of **"textData"** by calling **"returnAsBinary()"** method before send as follow.
 
 ```cpp
 #include <fstream>
@@ -232,8 +231,7 @@ int main() {
 
 ## Sending custom HTTP headers
 
-If you need to send custom HTTP HEADERs during the request, you can send them in 
-std::map<std::string, std::string> format.
+If you need to send custom HTTP HEADERs during the request, you can add them to the request as key-value pairs with **"addHeader()"** method.
 
 ```cpp
 #include <fstream>
@@ -243,7 +241,7 @@ using namespace lklibs;
 
 int main() {
     
-    HttpRequest httpRequest("https://api.myproject.com?param1=7&param2=test");
+    HttpRequest httpRequest("https://api.myproject.com");
 
     // You can send custom headers as key-value pairs
     auto response = httpRequest
@@ -261,8 +259,7 @@ int main() {
 
 ## POST request with form data
 
-Next is submitting form data via HTTP POST. All you have to do is use **"postRequest"** instead 
-of **"getRequest"**. You can pass the form data to the **"payload"** variable as seen in the sample code below.
+Next is submitting form data via HTTP POST. All you have to do is use **"setMethod"** to change HTTP method type. You can pass the form data with **"setPaylod"** method as seen in the sample code below.
 
 ```cpp
 #include <fstream>
@@ -339,24 +336,21 @@ int main() {
     auto future1 = httpRequest
             .setMethod(HttpMethod::PUT)
             .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+            .send();
     
     HttpRequest httpRequest2("https://api.myproject.com");
 
     auto future2 = httpRequest
             .setMethod(HttpMethod::DELETE_)
             .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+            .send();
     
     HttpRequest httpRequest3("https://api.myproject.com");
     
     auto future3 = httpRequest
             .setMethod(HttpMethod::PATCH)
             .setQueryString("param1=7&param2=test")
-            .send()
-            .get();
+            .send();
 
     auto response1 = future1.get();
     auto response2 = future2.get();
@@ -369,9 +363,8 @@ int main() {
 
 ## How to ignore SSL certificate errors?
 
-If you need to ignore SSL certificate errors for any valid reason, you can continue
-working by passing **"true"** value  to the **"ignoreSslErrors"** variable of the
-HttpRequest class.
+If you need to ignore SSL certificate errors for any valid reason, you can call "ignoreSslErrors" 
+method before sending the request.
 
 ```cpp
 #include <fstream>
@@ -384,7 +377,10 @@ int main() {
     HttpRequest httpRequest("https://api.myinvalidssl.com");
 
     // If you need to ignore SSL errors, you can call "ignoreSslErrors" method before sending the request
-    auto response = httpRequest.ignoreSslErrors().send().get();
+    auto response = httpRequest
+            .ignoreSslErrors()
+            .send()
+            .get();
 
     return 0;
 }
@@ -410,7 +406,7 @@ section to the documentation.
 ## Full function list
 
 You can find the complete list of functions in the library below. Since all methods except 
-send return the class itself, they can be added one after the other like a chain.
+send return the class itself, so they can be added one after the other like a chain.
 
 > [!TIP]
 > All methods and parameters descriptions are also available within the code as comment for IDEs.
