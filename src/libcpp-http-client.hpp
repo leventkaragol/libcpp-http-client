@@ -37,6 +37,8 @@ SOFTWARE.
 #include <future>
 #include <map>
 #include <memory>
+#include <mutex>
+#include <cstdlib>
 #include <curl/curl.h>
 
 namespace lklibs {
@@ -89,6 +91,44 @@ namespace lklibs {
     };
 
     /**
+     * @brief Class to initialize and cleanup the curl library
+     */
+    class CurlGlobalInitializer {
+    public:
+        /**
+         * @brief Static initialize method that ensures that curl is initialized only once when it is first used in the program
+         */
+        static void initialize() {
+
+            static bool initialized = false;
+
+            static std::mutex init_mutex;
+
+            std::lock_guard<std::mutex> lock(init_mutex);
+
+            if (!initialized) {
+
+                CURLcode result = curl_global_init(CURL_GLOBAL_DEFAULT);
+
+                if (result == CURLE_OK) {
+
+                    initialized = true;
+
+                    // Cleanup is called at program exit.
+                    std::atexit(cleanup);
+                }
+            }
+        }
+
+    private:
+
+        static void cleanup() {
+
+            curl_global_cleanup();
+        }
+    };
+
+    /**
      * @brief HTTP request class that makes asynchronous HTTP calls
      */
     class HttpRequest {
@@ -103,11 +143,7 @@ namespace lklibs {
 
             this->url = url;
 
-            curl_global_init(CURL_GLOBAL_DEFAULT);
-        }
-
-        ~HttpRequest() {
-            curl_global_cleanup();
+            CurlGlobalInitializer::initialize();
         }
 
         /**
