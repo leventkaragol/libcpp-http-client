@@ -51,7 +51,7 @@ void receiveBinaryData() {
 
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
-    // If you need to retrieve binary data such as an image, just call the "returnAsBinary" method
+    // If you need to retrieve binary data such as an image, just call the "returnAsBinary" method before send
     auto response = httpRequest
             .returnAsBinary()
             .send()
