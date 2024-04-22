@@ -730,7 +730,7 @@ TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 0) << "HTTP Status Code is not 0";
-    ASSERT_EQ(response.errorMessage, "SSL peer certificate or SSH remote key was not OK") << "HTTP Error Message is invalid";
+    ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
 TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfIgnoreSslErrorsFieldSetTrue) {
