@@ -26,6 +26,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [How to ignore SSL certificate errors?](#how-to-ignore-ssl-certificate-errors)
 * [Setting the TLS version](#setting-the-tls-version)
 * [How to set timeout?](#how-to-set-timeout)
+* [Setting the User Agent](#setting-the-user-agent)
 * [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
@@ -438,6 +439,30 @@ int main() {
 ```
 
 
+## Setting the User Agent
+
+You can set the User Agent information to be sent during the request with the setUserAgent method.
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    HttpRequest httpRequest("https://api.myproject.com");
+    
+    // You can set the user agent to be used for the request with setUserAgent method
+    auto response = httpRequest
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
+                    .send()
+                    .get();
+    
+    return 0;
+}
+```
+
+
 ## How can I limit download and upload bandwidth?
 
 If you do not want the bandwidth to exceed a certain limit during the download and upload process, you can determine the maximum limit that can be used in Bytes with the setDownloadBandwidthLimit and setUploadBandwidthLimit methods.
@@ -488,14 +513,29 @@ send return the class itself, so they can be added one after the other like a ch
 > All methods and parameters descriptions are also available within the code as comment for IDEs.
 
 ```cpp
-- HttpRequest &setMethod(const HttpMethod &method) noexcept
-- HttpRequest &setQueryString(const std::string &queryString) noexcept
-- HttpRequest &setPayload(const std::string &payload) noexcept
-- HttpRequest &returnAsBinary() noexcept
-- HttpRequest &ignoreSslErrors() noexcept
-- HttpRequest &addHeader(const std::string &key, const std::string &value) noexcept
-- std::future<HttpResult> send() noexcept
+- HttpRequest& setMethod(const HttpMethod& method) noexcept
 
+- HttpRequest& setQueryString(const std::string& queryString) noexcept
+
+- HttpRequest& setPayload(const std::string& payload) noexcept
+
+- HttpRequest& returnAsBinary() noexcept
+
+- HttpRequest& addHeader(const std::string& key, const std::string& value) noexcept
+
+- HttpRequest& setTimeout(const int timeout) noexcept
+
+- HttpRequest& ignoreSslErrors() noexcept
+
+- HttpRequest& setTLSVersion(const TLSVersion version) noexcept
+
+- HttpRequest& setUserAgent(const std::string& userAgent) noexcept
+
+- HttpRequest& setDownloadBandwidthLimit(const int limit) noexcept
+
+- HttpRequest& setUploadBandwidthLimit(const int limit) noexcept
+
+- std::future<HttpResult> send() noexcept
 ```
 
 

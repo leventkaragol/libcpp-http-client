@@ -202,6 +202,21 @@ void setTLSVersion()
     std::cout << "Data: " << response.textData << std::endl;
 }
 
+void setUserAgent()
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
+
+    // You can set the user agent to be used for the request with setUserAgent method
+    auto response = httpRequest
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
+                    .send()
+                    .get();
+
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+    std::cout << "Data: " << response.textData << std::endl;
+}
+
 void setTimeout()
 {
     HttpRequest httpRequest("https://httpstat.us/504?sleep=10000");
@@ -259,6 +274,8 @@ int main()
     ignoreSslErrors();
 
     setTLSVersion();
+
+    setUserAgent();
 
     setTimeout();
 

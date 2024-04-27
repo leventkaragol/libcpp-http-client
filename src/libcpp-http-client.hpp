@@ -221,28 +221,6 @@ namespace lklibs
         }
 
         /**
-         * @brief Ignore SSL errors when making HTTP requests
-         */
-        HttpRequest& ignoreSslErrors() noexcept
-        {
-            this->sslErrorsWillBeIgnored = true;
-
-            return *this;
-        }
-
-        /**
-         * @brief Set the TLS version for the request
-         *
-         * @param version: TLS version to be used for the request
-         */
-        HttpRequest& setTLSVersion(TLSVersion version) noexcept
-        {
-            this->tlsVersion = version;
-
-            return *this;
-        }
-
-        /**
          * @brief Add a HTTP header to the request
          *
          * @param key: Header key
@@ -260,9 +238,43 @@ namespace lklibs
          *
          * @param timeout: Timeout in seconds (0 for no timeout)
          */
-        HttpRequest& setTimeout(int timeout) noexcept
+        HttpRequest& setTimeout(const int timeout) noexcept
         {
             this->timeout = timeout;
+
+            return *this;
+        }
+
+        /**
+         * @brief Ignore SSL errors when making HTTP requests
+         */
+        HttpRequest& ignoreSslErrors() noexcept
+        {
+            this->sslErrorsWillBeIgnored = true;
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the TLS version for the request
+         *
+         * @param version: TLS version to be used for the request
+         */
+        HttpRequest& setTLSVersion(const TLSVersion version) noexcept
+        {
+            this->tlsVersion = version;
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the user agent for the request
+         *
+         * @param userAgent: User agent to be used for the request
+         */
+        HttpRequest& setUserAgent(const std::string& userAgent) noexcept
+        {
+            this->userAgent = userAgent;
 
             return *this;
         }
@@ -272,7 +284,7 @@ namespace lklibs
          *
          * @param limit: Download bandwidth limit in bytes per second (0 for no limit)
          */
-        HttpRequest& setDownloadBandwidthLimit(int limit) noexcept
+        HttpRequest& setDownloadBandwidthLimit(const int limit) noexcept
         {
             this->downloadBandwidthLimit = limit;
 
@@ -284,7 +296,7 @@ namespace lklibs
          *
          * @param limit: Upload bandwidth limit in bytes per second (0 for no limit)
          */
-        HttpRequest& setUploadBandwidthLimit(int limit) noexcept
+        HttpRequest& setUploadBandwidthLimit(const int limit) noexcept
         {
             this->uploadBandwidthLimit = limit;
 
@@ -322,6 +334,7 @@ namespace lklibs
         std::string url;
         std::string method = "GET";
         std::string payload;
+        std::string userAgent;
         bool sslErrorsWillBeIgnored = false;
         ReturnFormat returnFormat = ReturnFormat::TEXT;
         std::map<std::string, std::string> headers;
@@ -385,6 +398,11 @@ namespace lklibs
                 curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, this->timeout);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, this->uploadBandwidthLimit);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, this->downloadBandwidthLimit);
+
+                if (!this->userAgent.empty())
+                {
+                    curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, this->userAgent.c_str());
+                }
 
                 if (!this->payload.empty())
                 {
