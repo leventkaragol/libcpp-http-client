@@ -206,7 +206,7 @@ void setUserAgent()
 {
     HttpRequest httpRequest("https://httpbun.com/get");
 
-    // You can set the TLS version to be used for the request with setTLSVersion method
+    // You can set the user agent to be used for the request with setUserAgent method
     auto response = httpRequest
                     .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
                     .send()
