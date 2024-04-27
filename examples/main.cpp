@@ -1,25 +1,24 @@
-#include <fstream>
 #include "libcpp-http-client.hpp"
 
 using namespace lklibs;
 
-void simpleGet() {
-
+void simpleGet()
+{
     HttpRequest httpRequest("https://httpbun.com/get");
 
     // The simplest but slowest method if multiple calls will be made
     auto response = httpRequest
-            .setQueryString("param1=7&param2=test")
-            .send()
-            .get();
+                    .setQueryString("param1=7&param2=test")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void nonBlockingGet() {
-
+void nonBlockingGet()
+{
     HttpRequest httpRequest1("https://httpbun.com/get");
     HttpRequest httpRequest2("https://httpbun.com/get");
     HttpRequest httpRequest3("https://httpbun.com/get");
@@ -47,15 +46,15 @@ void nonBlockingGet() {
     std::cout << "Response3 Data: " << response3.textData << std::endl;
 }
 
-void receiveBinaryData() {
-
+void receiveBinaryData()
+{
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
     // If you need to retrieve binary data such as an image, just call the "returnAsBinary" method before send
     auto response = httpRequest
-            .returnAsBinary()
-            .send()
-            .get();
+                    .returnAsBinary()
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
@@ -64,8 +63,8 @@ void receiveBinaryData() {
     std::cout << "Data Size: " << response.binaryData.size() << std::endl;
 }
 
-void receiveError() {
-
+void receiveError()
+{
     HttpRequest httpRequest("https://httpbun.com/not_found");
 
     // This is an exception free library. If an error occurs, no exception is thrown
@@ -81,103 +80,103 @@ void receiveError() {
     std::cout << "Error Message: " << response.errorMessage << std::endl;
 }
 
-void sendingHttpHeaders() {
-
+void sendingHttpHeaders()
+{
     HttpRequest httpRequest("https://httpbun.com/get?param1=7&param2=test");
 
     // You can send custom headers as key-value pairs
     auto response = httpRequest
-            .addHeader("Custom-Header1", "value1")
-            .addHeader("Custom-Header2", "value2")
-            .send()
-            .get();
+                    .addHeader("Custom-Header1", "value1")
+                    .addHeader("Custom-Header2", "value2")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
 }
 
-void simplePostWithFormData() {
-
+void simplePostWithFormData()
+{
     HttpRequest httpRequest("https://httpbun.com/post");
 
     // You can send a POST request with form data in the payload
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .setPayload("param1=7&param2=test")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void simplePostWithJSONData() {
-
+void simplePostWithJSONData()
+{
     HttpRequest httpRequest("https://httpbun.com/post");
 
     // You need to send the "Content-Type" as "application/json" in the HTTP Header, if you need to send json data in the payload
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .setPayload(R"({"param1": 7, "param2": "test"})")
-            .addHeader("Content-Type", "application/json")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void simplePutWithFormData() {
-
+void simplePutWithFormData()
+{
     HttpRequest httpRequest("https://httpbun.com/put");
 
     // You can send a PUT request with form data in the payload just like POST
     auto response = httpRequest
-            .setMethod(HttpMethod::PUT)
-            .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PUT)
+                    .setPayload("param1=7&param2=test")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void simpleDeleteWithFormData() {
-
+void simpleDeleteWithFormData()
+{
     HttpRequest httpRequest("https://httpbun.com/delete");
 
     // You can send a DELETE request with form data in the payload just like POST
     auto response = httpRequest
-            .setMethod(HttpMethod::DELETE_)
-            .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::DELETE_)
+                    .setPayload("param1=7&param2=test")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void simplePatch() {
-
+void simplePatch()
+{
     HttpRequest httpRequest("https://httpbun.com/patch");
 
     // You can send a PATCH request with QueryString just like GET
     auto response = httpRequest
-            .setMethod(HttpMethod::PATCH)
-            .setQueryString("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PATCH)
+                    .setQueryString("param1=7&param2=test")
+                    .send()
+                    .get();
 
     std::cout << "Succeed: " << response.succeed << std::endl;
     std::cout << "Http Status Code: " << response.statusCode << std::endl;
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void ignoreSslErrors() {
-
+void ignoreSslErrors()
+{
     HttpRequest httpRequest("https://self-signed-cert.httpbun.com");
 
     // If you need to ignore SSL errors, you can call "ignoreSslErrors" method before sending the request
@@ -188,9 +187,25 @@ void ignoreSslErrors() {
     std::cout << "Data: " << response.textData << std::endl;
 }
 
+void setDownloadAndUploadBandwidthLimit()
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
 
-int main() {
+    // You can set the download and upload bandwidth limit in bytes per second
+    auto response = httpRequest
+                    .setDownloadBandwidthLimit(10240) // 10 KB/sec
+                    .setUploadBandwidthLimit(20480) // 20 KB/sec
+                    .send()
+                    .get();
 
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+    std::cout << "Data: " << response.textData << std::endl;
+}
+
+
+int main()
+{
     simpleGet();
 
     nonBlockingGet();
@@ -212,6 +227,8 @@ int main() {
     simplePatch();
 
     ignoreSslErrors();
+
+    setDownloadAndUploadBandwidthLimit();
 
     return 0;
 }
