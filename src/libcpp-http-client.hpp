@@ -225,6 +225,30 @@ namespace lklibs {
         }
 
         /**
+         * @brief Set the download bandwidth limit for the request
+         *
+         * @param limit: Download bandwidth limit in bytes per second (0 for no limit)
+         */
+        HttpRequest &setDownloadBandwidthLimit(int limit) noexcept {
+
+            this->downloadBandwidthLimit = limit;
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the upload bandwidth limit for the request
+         *
+         * @param limit: Upload bandwidth limit in bytes per second (0 for no limit)
+         */
+        HttpRequest &setUploadBandwidthLimit(int limit) noexcept {
+
+            this->uploadBandwidthLimit = limit;
+
+            return *this;
+        }
+
+        /**
          * @brief Send the HTTP request and return the result as a future
          * The result can be obtained by calling the get() method of the future
          * get() method will block until the result is available so it is recommended to use it
@@ -258,6 +282,8 @@ namespace lklibs {
         bool sslErrorsWillBeIgnored = false;
         ReturnFormat returnFormat = ReturnFormat::TEXT;
         std::map<std::string, std::string> headers;
+        int uploadBandwidthLimit = 0;
+        int downloadBandwidthLimit = 0;
 
         struct CurlDeleter {
 
@@ -310,6 +336,9 @@ namespace lklibs {
                 curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, this->method.c_str());
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->sslErrorsWillBeIgnored ? 0L : 1L);
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->sslErrorsWillBeIgnored ? 0L : 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, this->uploadBandwidthLimit);
+                curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, this->downloadBandwidthLimit);
+
 
                 if (!this->payload.empty()) {
 

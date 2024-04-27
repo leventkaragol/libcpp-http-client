@@ -5,14 +5,14 @@
 using namespace lklibs;
 using json = nlohmann::json;
 
-TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
-
+TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm)
+{
     HttpRequest httpRequest("https://httpbun.com/get");
 
     auto response = httpRequest
-            .setQueryString("param1=7&param2=test")
-            .send()
-            .get();
+                    .setQueryString("param1=7&param2=test")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -27,8 +27,8 @@ TEST(HttpGetTest, HttpGetRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
     ASSERT_EQ(data["args"]["param2"], "test") << "Querystring is invalid";
 }
 
-TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
-
+TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlockingForm)
+{
     HttpRequest httpRequest1("https://httpbun.com/get");
     HttpRequest httpRequest2("https://httpbun.com/get");
     HttpRequest httpRequest3("https://httpbun.com/get");
@@ -76,14 +76,14 @@ TEST(HttpGetTest, MultipleHttpGetRequestMustBeCompletedSuccessfullyInNonBlocking
     ASSERT_EQ(data3["args"]["param2"], "test3") << "Querystring is invalid";
 }
 
-TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat) {
-
+TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat)
+{
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
     auto response = httpRequest
-            .returnAsBinary()
-            .send()
-            .get();
+                    .returnAsBinary()
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -92,8 +92,8 @@ TEST(HttpGetTest, ResponseOfAnHttpGetRequestCanBeReceivedInBinaryFormat) {
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMadeToAnInvalidAddress) {
-
+TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMadeToAnInvalidAddress)
+{
     HttpRequest httpRequest("https://httpbun.com/not_found");
 
     auto response = httpRequest.send().get();
@@ -103,8 +103,8 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMade
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForAnotherError) {
-
+TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForAnotherError)
+{
     HttpRequest httpRequest("https://httpbun.com/bearer");
 
     auto response = httpRequest.send().get();
@@ -114,16 +114,16 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForA
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest) {
-
+TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest)
+{
     HttpRequest httpRequest("https://httpbun.com/get");
 
     auto response = httpRequest
-            .setQueryString("param1=7&param2=test")
-            .addHeader("Custom-Header1", "value1")
-            .addHeader("Custom-Header2", "value2")
-            .send()
-            .get();
+                    .setQueryString("param1=7&param2=test")
+                    .addHeader("Custom-Header1", "value1")
+                    .addHeader("Custom-Header2", "value2")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -141,15 +141,15 @@ TEST(HttpGetTest, HttpHeadersCanBeSentWithTheHttpGetRequest) {
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
-TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
-
+TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm)
+{
     HttpRequest httpRequest("https://httpbun.com/post");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .setPayload("param1=7&param2=test")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -164,8 +164,8 @@ TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm) 
     ASSERT_EQ(data["form"]["param2"], "test") << "Payload is invalid";
 }
 
-TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
-
+TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlockingForm)
+{
     HttpRequest httpRequest1("https://httpbun.com/post");
     HttpRequest httpRequest2("https://httpbun.com/post");
     HttpRequest httpRequest3("https://httpbun.com/post");
@@ -213,15 +213,15 @@ TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlocki
     ASSERT_EQ(data3["form"]["param2"], "test3") << "Payload is invalid";
 }
 
-TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat) {
-
+TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat)
+{
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .returnAsBinary()
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .returnAsBinary()
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -230,46 +230,46 @@ TEST(HttpPostTest, ResponseOfAnHttpPostRequestCanBeReceivedInBinaryFormat) {
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMadeToAnInvalidAddress) {
-
+TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMadeToAnInvalidAddress)
+{
     HttpRequest httpRequest("https://httpbun.com/not_found");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .send()
+                    .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestForAnotherError) {
-
+TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestForAnotherError)
+{
     HttpRequest httpRequest("https://httpbun.com/bearer");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .send()
+                    .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest) {
-
+TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest)
+{
     HttpRequest httpRequest("https://httpbun.com/post");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::POST)
-            .setPayload(R"({"param1": 7, "param2": "test"})")
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Custom-Header1", "value1")
-            .addHeader("Custom-Header2", "value2")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::POST)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Custom-Header1", "value1")
+                    .addHeader("Custom-Header2", "value2")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -288,15 +288,15 @@ TEST(HttpPostTest, HttpHeadersCanBeSentWithTheHttpPostRequest) {
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
-TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
-
+TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm)
+{
     HttpRequest httpRequest("https://httpbun.com/put");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PUT)
-            .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PUT)
+                    .setPayload("param1=7&param2=test")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -311,8 +311,8 @@ TEST(HttpPutTest, HttpPutRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
     ASSERT_EQ(data["form"]["param2"], "test") << "Payload is invalid";
 }
 
-TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
-
+TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlockingForm)
+{
     HttpRequest httpRequest1("https://httpbun.com/put");
     HttpRequest httpRequest2("https://httpbun.com/put");
     HttpRequest httpRequest3("https://httpbun.com/put");
@@ -360,15 +360,15 @@ TEST(HttpPutTest, MultipleHttpPutRequestMustBeCompletedSuccessfullyInNonBlocking
     ASSERT_EQ(data3["form"]["param2"], "test3") << "Payload is invalid";
 }
 
-TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat) {
-
+TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat)
+{
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PUT)
-            .returnAsBinary()
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PUT)
+                    .returnAsBinary()
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -377,46 +377,46 @@ TEST(HttpPutTest, ResponseOfAnHttpPutRequestCanBeReceivedInBinaryFormat) {
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMadeToAnInvalidAddress) {
-
+TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMadeToAnInvalidAddress)
+{
     HttpRequest httpRequest("https://httpbun.com/not_found");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PUT)
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PUT)
+                    .send()
+                    .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForAnotherError) {
-
+TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForAnotherError)
+{
     HttpRequest httpRequest("https://httpbun.com/bearer");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PUT)
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PUT)
+                    .send()
+                    .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest) {
-
+TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest)
+{
     HttpRequest httpRequest("https://httpbun.com/put");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PUT)
-            .setPayload(R"({"param1": 7, "param2": "test"})")
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Custom-Header1", "value1")
-            .addHeader("Custom-Header2", "value2")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PUT)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Custom-Header1", "value1")
+                    .addHeader("Custom-Header2", "value2")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -435,15 +435,15 @@ TEST(HttpPutTest, HttpHeadersCanBeSentWithTheHttpPutRequest) {
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
-TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
-
+TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestForm)
+{
     HttpRequest httpRequest("https://httpbun.com/delete");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::DELETE_)
-            .setPayload("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::DELETE_)
+                    .setPayload("param1=7&param2=test")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -458,8 +458,8 @@ TEST(HttpDeleteTest, HttpDeleteRequestMustBeCompletedSuccessfullyInItsSimplestFo
     ASSERT_EQ(data["form"]["param2"], "test") << "Payload is invalid";
 }
 
-TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
-
+TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBlockingForm)
+{
     HttpRequest httpRequest1("https://httpbun.com/delete");
     HttpRequest httpRequest2("https://httpbun.com/delete");
     HttpRequest httpRequest3("https://httpbun.com/delete");
@@ -507,15 +507,15 @@ TEST(HttpDeleteTest, MultipleHttpDeleteRequestMustBeCompletedSuccessfullyInNonBl
     ASSERT_EQ(data3["form"]["param2"], "test3") << "Payload is invalid";
 }
 
-TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat) {
-
+TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat)
+{
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::DELETE_)
-            .returnAsBinary()
-            .send()
-            .get();
+                    .setMethod(HttpMethod::DELETE_)
+                    .returnAsBinary()
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -524,46 +524,46 @@ TEST(HttpDeleteTest, ResponseOfAnHttpDeleteRequestCanBeReceivedInBinaryFormat) {
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestMadeToAnInvalidAddress) {
-
+TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestMadeToAnInvalidAddress)
+{
     HttpRequest httpRequest("https://httpbun.com/not_found");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::DELETE_)
-            .send()
-            .get();
+                    .setMethod(HttpMethod::DELETE_)
+                    .send()
+                    .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 404) << "HTTP Status Code is not 404";
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestForAnotherError) {
-
+TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestForAnotherError)
+{
     HttpRequest httpRequest("https://httpbun.com/bearer");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::DELETE_)
-            .send()
-            .get();
+                    .setMethod(HttpMethod::DELETE_)
+                    .send()
+                    .get();
 
     ASSERT_FALSE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 401) << "HTTP Status Code is not 401";
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest) {
-
+TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest)
+{
     HttpRequest httpRequest("https://httpbun.com/delete");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::DELETE_)
-            .setPayload(R"({"param1": 7, "param2": "test"})")
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Custom-Header1", "value1")
-            .addHeader("Custom-Header2", "value2")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::DELETE_)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Custom-Header1", "value1")
+                    .addHeader("Custom-Header2", "value2")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -583,15 +583,15 @@ TEST(HttpDeleteTest, HttpHeadersCanBeSentWithTheHttpDeleteRequest) {
 }
 
 
-TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm) {
-
+TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm)
+{
     HttpRequest httpRequest("https://httpbun.com/patch");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PATCH)
-            .setQueryString("param1=7&param2=test")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PATCH)
+                    .setQueryString("param1=7&param2=test")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -606,8 +606,8 @@ TEST(HttpPatchTest, HttpPatchRequestMustBeCompletedSuccessfullyInItsSimplestForm
     ASSERT_EQ(data["args"]["param2"], "test") << "Querystring is invalid";
 }
 
-TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBlockingForm) {
-
+TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBlockingForm)
+{
     HttpRequest httpRequest1("https://httpbun.com/patch");
     HttpRequest httpRequest2("https://httpbun.com/patch");
     HttpRequest httpRequest3("https://httpbun.com/patch");
@@ -655,15 +655,15 @@ TEST(HttpPatchTest, MultipleHttpPatchRequestMustBeCompletedSuccessfullyInNonBloc
     ASSERT_EQ(data3["args"]["param2"], "test3") << "Querystring is invalid";
 }
 
-TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat) {
-
+TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat)
+{
     HttpRequest httpRequest("https://httpbun.com/bytes/100");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PATCH)
-            .returnAsBinary()
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PATCH)
+                    .returnAsBinary()
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -672,8 +672,8 @@ TEST(HttpPatchTest, ResponseOfAnHttpPatchRequestCanBeReceivedInBinaryFormat) {
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestMadeToAnInvalidAddress) {
-
+TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestMadeToAnInvalidAddress)
+{
     HttpRequest httpRequest("https://httpbun.com/not_found");
 
     auto response = httpRequest.setMethod(HttpMethod::PATCH).send().get();
@@ -683,8 +683,8 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestForAnotherError) {
-
+TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestForAnotherError)
+{
     HttpRequest httpRequest("https://httpbun.com/bearer");
 
     auto response = httpRequest.setMethod(HttpMethod::PATCH).send().get();
@@ -694,17 +694,17 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
-
+TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest)
+{
     HttpRequest httpRequest("https://httpbun.com/patch");
 
     auto response = httpRequest
-            .setMethod(HttpMethod::PATCH)
-            .setQueryString("param1=7&param2=test")
-            .addHeader("Custom-Header1", "value1")
-            .addHeader("Custom-Header2", "value2")
-            .send()
-            .get();
+                    .setMethod(HttpMethod::PATCH)
+                    .setQueryString("param1=7&param2=test")
+                    .addHeader("Custom-Header1", "value1")
+                    .addHeader("Custom-Header2", "value2")
+                    .send()
+                    .get();
 
     ASSERT_TRUE(response.succeed) << "HTTP Request failed";
     ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
@@ -722,8 +722,8 @@ TEST(HttpPatchTest, HttpHeadersCanBeSentWithTheHttpPatchRequest) {
     ASSERT_EQ(data["headers"]["Custom-Header2"], "value2") << "Custom-Header2 is invalid";
 }
 
-TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
-
+TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl)
+{
     HttpRequest httpRequest("https://self-signed-cert.httpbun.com");
 
     auto response = httpRequest.send().get();
@@ -733,8 +733,8 @@ TEST(InvalidSSLTest, HttpGetRequestMustReturnErrorForAnInvalidSsl) {
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfIgnoreSslErrorsFieldSetTrue) {
-
+TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfIgnoreSslErrorsFieldSetTrue)
+{
     HttpRequest httpRequest("https://self-signed-cert.httpbun.com");
 
     auto response = httpRequest.ignoreSslErrors().send().get();
@@ -746,8 +746,40 @@ TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfI
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-int main(int argc, char** argv) {
+TEST(BandwidthLimit, DownloadBandwidthLimitCanBeSet)
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
 
+    auto response = httpRequest
+                    .setDownloadBandwidthLimit(10240)
+                    .send()
+                    .get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+    ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
+    ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
+    ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+}
+
+TEST(BandwidthLimit, UploadBandwidthLimitCanBeSet)
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
+
+    auto response = httpRequest
+                    .setUploadBandwidthLimit(10240)
+                    .send()
+                    .get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+    ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
+    ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
+    ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+}
+
+int main(int argc, char** argv)
+{
     testing::InitGoogleTest(&argc, argv);
 
     return RUN_ALL_TESTS();
