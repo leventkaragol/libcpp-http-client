@@ -24,6 +24,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [POST request with JSON data](#post-request-with-json-data)
 * [What about others? (PUT, DELETE, PATCH)](#what-about-others-put-delete-patch)
 * [How to ignore SSL certificate errors?](#how-to-ignore-ssl-certificate-errors)
+* [How to set timeout?](#how-to-set-timeout)
 * [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
@@ -383,6 +384,29 @@ int main() {
             .send()
             .get();
 
+    return 0;
+}
+```
+
+## How to set timeout?
+
+You can use the setTimeout method to set the timeout duration in seconds during requests.
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    HttpRequest httpRequest("https://api.myproject.com");
+    
+    // You can set the timeout in seconds
+    auto response = httpRequest
+                    .setTimeout(3) // 3 sec
+                    .send()
+                    .get();
+    
     return 0;
 }
 ```

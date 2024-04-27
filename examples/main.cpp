@@ -187,6 +187,21 @@ void ignoreSslErrors()
     std::cout << "Data: " << response.textData << std::endl;
 }
 
+void setTimeout()
+{
+    HttpRequest httpRequest("https://httpstat.us/504?sleep=10000");
+
+    // You can set the timeout in seconds
+    auto response = httpRequest
+                    .setTimeout(3) // 3 sec
+                    .send()
+                    .get();
+
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+    std::cout << "Error Message: " << response.errorMessage << std::endl;
+}
+
 void setDownloadAndUploadBandwidthLimit()
 {
     HttpRequest httpRequest("https://httpbun.com/get");
@@ -227,6 +242,8 @@ int main()
     simplePatch();
 
     ignoreSslErrors();
+
+    setTimeout();
 
     setDownloadAndUploadBandwidthLimit();
 
