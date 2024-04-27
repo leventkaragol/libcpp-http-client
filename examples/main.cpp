@@ -1,4 +1,3 @@
-#include <fstream>
 #include "libcpp-http-client.hpp"
 
 using namespace lklibs;
@@ -188,14 +187,14 @@ void ignoreSslErrors()
     std::cout << "Data: " << response.textData << std::endl;
 }
 
-void setUploadAndDownloadBandwidthLimit()
+void setDownloadAndUploadBandwidthLimit()
 {
     HttpRequest httpRequest("https://httpbun.com/get");
 
-    // You can set the upload and download bandwidth limit in bytes per second
+    // You can set the download and upload bandwidth limit in bytes per second
     auto response = httpRequest
-                    .setUploadBandwidthLimit(20480) // 2 KB/sec
-                    .setDownloadBandwidthLimit(10240) // 1 KB/sec
+                    .setDownloadBandwidthLimit(10240) // 10 KB/sec
+                    .setUploadBandwidthLimit(20480) // 20 KB/sec
                     .send()
                     .get();
 
@@ -207,29 +206,29 @@ void setUploadAndDownloadBandwidthLimit()
 
 int main()
 {
-    // simpleGet();
-    //
-    // nonBlockingGet();
-    //
-    // receiveBinaryData();
-    //
-    // receiveError();
-    //
-    // sendingHttpHeaders();
-    //
-    // simplePostWithFormData();
-    //
-    // simplePostWithJSONData();
-    //
-    // simplePutWithFormData();
-    //
-    // simpleDeleteWithFormData();
-    //
-    // simplePatch();
-    //
-    // ignoreSslErrors();
+    simpleGet();
 
-    setUploadAndDownloadBandwidthLimit();
+    nonBlockingGet();
+
+    receiveBinaryData();
+
+    receiveError();
+
+    sendingHttpHeaders();
+
+    simplePostWithFormData();
+
+    simplePostWithJSONData();
+
+    simplePutWithFormData();
+
+    simpleDeleteWithFormData();
+
+    simplePatch();
+
+    ignoreSslErrors();
+
+    setDownloadAndUploadBandwidthLimit();
 
     return 0;
 }
