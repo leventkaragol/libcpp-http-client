@@ -221,31 +221,31 @@ void setDownloadAndUploadBandwidthLimit()
 
 int main()
 {
-    // simpleGet();
-    //
-    // nonBlockingGet();
-    //
-    // receiveBinaryData();
-    //
-    // receiveError();
-    //
-    // sendingHttpHeaders();
-    //
-    // simplePostWithFormData();
-    //
-    // simplePostWithJSONData();
-    //
-    // simplePutWithFormData();
-    //
-    // simpleDeleteWithFormData();
-    //
-    // simplePatch();
-    //
-    // ignoreSslErrors();
+    simpleGet();
+
+    nonBlockingGet();
+
+    receiveBinaryData();
+
+    receiveError();
+
+    sendingHttpHeaders();
+
+    simplePostWithFormData();
+
+    simplePostWithJSONData();
+
+    simplePutWithFormData();
+
+    simpleDeleteWithFormData();
+
+    simplePatch();
+
+    ignoreSslErrors();
 
     setTimeout();
 
-    // setDownloadAndUploadBandwidthLimit();
+    setDownloadAndUploadBandwidthLimit();
 
     return 0;
 }
