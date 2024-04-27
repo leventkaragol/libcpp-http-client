@@ -773,6 +773,26 @@ TEST(TimeoutTest, TimeoutCanBeSet)
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
+TEST(UserAgentTest, UserAgentCanBeSet)
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
+
+    auto response = httpRequest
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
+                    .send()
+                    .get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+    ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
+    ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
+    ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+
+    auto data = json::parse(response.textData);
+
+    ASSERT_EQ(data["headers"]["User-Agent"], "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0") << "User-Agent is invalid";
+}
+
 TEST(BandwidthLimitTest, DownloadBandwidthLimitCanBeSet)
 {
     HttpRequest httpRequest("https://httpbun.com/get");
