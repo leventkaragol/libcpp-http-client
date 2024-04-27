@@ -24,6 +24,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [POST request with JSON data](#post-request-with-json-data)
 * [What about others? (PUT, DELETE, PATCH)](#what-about-others-put-delete-patch)
 * [How to ignore SSL certificate errors?](#how-to-ignore-ssl-certificate-errors)
+* [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
 * [License](#license)
@@ -382,6 +383,31 @@ int main() {
             .send()
             .get();
 
+    return 0;
+}
+```
+
+
+## How can I limit download and upload bandwidth?
+
+If you do not want the bandwidth to exceed a certain limit during the download and upload process, you can determine the maximum limit that can be used in Bytes with the setDownloadBandwidthLimit and setUploadBandwidthLimit methods.
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    HttpRequest httpRequest("https://api.myproject.com");
+    
+    // You can set the download and upload bandwidth limit in bytes per second
+    auto response = httpRequest
+                    .setDownloadBandwidthLimit(10240) // 10 KB/sec
+                    .setUploadBandwidthLimit(20480) // 20 KB/sec
+                    .send()
+                    .get();
+    
     return 0;
 }
 ```
