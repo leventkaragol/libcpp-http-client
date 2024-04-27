@@ -26,6 +26,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [How to ignore SSL certificate errors?](#how-to-ignore-ssl-certificate-errors)
 * [Setting the TLS version](#setting-the-tls-version)
 * [How to set timeout?](#how-to-set-timeout)
+* [Setting the User Agent](#setting-the-user-agent)
 * [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
