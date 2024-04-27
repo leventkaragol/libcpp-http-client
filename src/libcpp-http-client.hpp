@@ -95,6 +95,21 @@ namespace lklibs
     };
 
     /**
+     * @brief TLS Version options for the request
+     */
+    enum class TLSVersion
+    {
+        DEFAULT,
+        TLSv1, /* TLS 1.x */
+        SSLv2,
+        SSLv3,
+        TLSv1_0,
+        TLSv1_1,
+        TLSv1_2,
+        TLSv1_3
+    };
+
+    /**
      * @brief Class to initialize and cleanup the curl library
      */
     class CurlGlobalInitializer
@@ -216,6 +231,18 @@ namespace lklibs
         }
 
         /**
+         * @brief Set the TLS version for the request
+         *
+         * @param version: TLS version to be used for the request
+         */
+        HttpRequest& setTLSVersion(TLSVersion version) noexcept
+        {
+            this->tlsVersion = version;
+
+            return *this;
+        }
+
+        /**
          * @brief Add a HTTP header to the request
          *
          * @param key: Header key
@@ -301,6 +328,7 @@ namespace lklibs
         int timeout = 0;
         int uploadBandwidthLimit = 0;
         int downloadBandwidthLimit = 0;
+        TLSVersion tlsVersion = TLSVersion::DEFAULT;
 
         struct CurlDeleter
         {
@@ -353,6 +381,7 @@ namespace lklibs
                 curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, this->method.c_str());
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->sslErrorsWillBeIgnored ? 0L : 1L);
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->sslErrorsWillBeIgnored ? 0L : 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_SSLVERSION, static_cast<int>(this->tlsVersion));
                 curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, this->timeout);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, this->uploadBandwidthLimit);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, this->downloadBandwidthLimit);

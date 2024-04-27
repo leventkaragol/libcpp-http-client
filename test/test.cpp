@@ -746,6 +746,22 @@ TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfI
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
+TEST(TLSVersionTest, TLSVersionCanBeSet)
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
+
+    auto response = httpRequest
+                    .setTLSVersion(TLSVersion::TLSv1_3)
+                    .send()
+                    .get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+    ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
+    ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
+    ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+}
+
 TEST(TimeoutTest, TimeoutCanBeSet)
 {
     HttpRequest httpRequest("https://httpstat.us/504?sleep=10000");
@@ -757,7 +773,7 @@ TEST(TimeoutTest, TimeoutCanBeSet)
     ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
 }
 
-TEST(BandwidthLimit, DownloadBandwidthLimitCanBeSet)
+TEST(BandwidthLimitTest, DownloadBandwidthLimitCanBeSet)
 {
     HttpRequest httpRequest("https://httpbun.com/get");
 
@@ -773,7 +789,7 @@ TEST(BandwidthLimit, DownloadBandwidthLimitCanBeSet)
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
-TEST(BandwidthLimit, UploadBandwidthLimitCanBeSet)
+TEST(BandwidthLimitTest, UploadBandwidthLimitCanBeSet)
 {
     HttpRequest httpRequest("https://httpbun.com/get");
 

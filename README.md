@@ -24,6 +24,7 @@ Modern, non-blocking and exception free, header-only HTTP Client library for C++
 * [POST request with JSON data](#post-request-with-json-data)
 * [What about others? (PUT, DELETE, PATCH)](#what-about-others-put-delete-patch)
 * [How to ignore SSL certificate errors?](#how-to-ignore-ssl-certificate-errors)
+* [Setting the TLS version](#setting-the-tls-version)
 * [How to set timeout?](#how-to-set-timeout)
 * [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
 * [Semantic Versioning](#semantic-versioning)
@@ -387,6 +388,31 @@ int main() {
     return 0;
 }
 ```
+
+
+## Setting the TLS version
+
+You can set the TLS version used during the request with the setTLSVersion method
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    HttpRequest httpRequest("https://api.myproject.com");
+    
+    // You can set the TLS version to be used for the request with setTLSVersion method
+    auto response = httpRequest
+                    .setTLSVersion(TLSVersion::TLSv1_3)
+                    .send()
+                    .get();
+    
+    return 0;
+}
+```
+
 
 ## How to set timeout?
 
