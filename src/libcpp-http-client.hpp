@@ -41,12 +41,13 @@ SOFTWARE.
 #include <cstdlib>
 #include <curl/curl.h>
 
-namespace lklibs {
-
+namespace lklibs
+{
     /**
      * @brief Contains the result of HTTP requests
      */
-    class HttpResult {
+    class HttpResult
+    {
     public:
         /**
          * @brief Information on whether the request was successful or not
@@ -76,13 +77,16 @@ namespace lklibs {
         HttpResult() = default;
 
         HttpResult(bool succeed, std::string textData, std::vector<unsigned char> binaryData, int statusCode, std::string errorMessage)
-                : succeed(succeed), textData(std::move(textData)), binaryData(std::move(binaryData)), statusCode(statusCode), errorMessage(std::move(errorMessage)) {}
+            : succeed(succeed), textData(std::move(textData)), binaryData(std::move(binaryData)), statusCode(statusCode), errorMessage(std::move(errorMessage))
+        {
+        }
     };
 
     /**
      * @brief HTTP Method options for the request
      */
-    enum class HttpMethod {
+    enum class HttpMethod
+    {
         GET,
         POST,
         PUT,
@@ -93,25 +97,26 @@ namespace lklibs {
     /**
      * @brief Class to initialize and cleanup the curl library
      */
-    class CurlGlobalInitializer {
+    class CurlGlobalInitializer
+    {
     public:
         /**
          * @brief Static initialize method that ensures that curl is initialized only once when it is first used in the program
          */
-        static void initialize() {
-
+        static void initialize()
+        {
             static bool initialized = false;
 
             static std::mutex init_mutex;
 
             std::lock_guard<std::mutex> lock(init_mutex);
 
-            if (!initialized) {
-
+            if (!initialized)
+            {
                 CURLcode result = curl_global_init(CURL_GLOBAL_DEFAULT);
 
-                if (result == CURLE_OK) {
-
+                if (result == CURLE_OK)
+                {
                     initialized = true;
 
                     // Cleanup is called at program exit.
@@ -121,9 +126,8 @@ namespace lklibs {
         }
 
     private:
-
-        static void cleanup() {
-
+        static void cleanup()
+        {
             curl_global_cleanup();
         }
     };
@@ -131,16 +135,16 @@ namespace lklibs {
     /**
      * @brief HTTP request class that makes asynchronous HTTP calls
      */
-    class HttpRequest {
+    class HttpRequest
+    {
     public:
-
         /**
          * @brief Constructor for the HttpRequest class
          *
          * @param url: URL for the request
          */
-        explicit HttpRequest(const std::string &url) {
-
+        explicit HttpRequest(const std::string& url)
+        {
             this->url = url;
 
             CurlGlobalInitializer::initialize();
@@ -151,8 +155,8 @@ namespace lklibs {
          *
          * @param method: HTTP method to be used for the request
          */
-        HttpRequest &setMethod(const HttpMethod &method) noexcept {
-
+        HttpRequest& setMethod(const HttpMethod& method) noexcept
+        {
             this->method = HttpMethodStrings[static_cast<int>(method)];
 
             return *this;
@@ -163,14 +167,14 @@ namespace lklibs {
          *
          * @param queryString: Query string to be sent with the request
          */
-        HttpRequest &setQueryString(const std::string &queryString) noexcept {
-
-            if (this->url.find('?') != std::string::npos) {
-
+        HttpRequest& setQueryString(const std::string& queryString) noexcept
+        {
+            if (this->url.find('?') != std::string::npos)
+            {
                 this->url += "&" + queryString;
-
-            } else {
-
+            }
+            else
+            {
                 this->url += "?" + queryString;
             }
 
@@ -184,8 +188,8 @@ namespace lklibs {
          *
          * @param payload: Payload to be sent with the request
          */
-        HttpRequest &setPayload(const std::string &payload) noexcept {
-
+        HttpRequest& setPayload(const std::string& payload) noexcept
+        {
             this->payload = payload;
 
             return *this;
@@ -194,8 +198,8 @@ namespace lklibs {
         /**
          * @brief Set the return format for the request as binary
          */
-        HttpRequest &returnAsBinary() noexcept {
-
+        HttpRequest& returnAsBinary() noexcept
+        {
             this->returnFormat = ReturnFormat::BINARY;
 
             return *this;
@@ -204,8 +208,8 @@ namespace lklibs {
         /**
          * @brief Ignore SSL errors when making HTTP requests
          */
-        HttpRequest &ignoreSslErrors() noexcept {
-
+        HttpRequest& ignoreSslErrors() noexcept
+        {
             this->sslErrorsWillBeIgnored = true;
 
             return *this;
@@ -217,9 +221,21 @@ namespace lklibs {
          * @param key: Header key
          * @param value: Header value
          */
-        HttpRequest &addHeader(const std::string &key, const std::string &value) noexcept {
-
+        HttpRequest& addHeader(const std::string& key, const std::string& value) noexcept
+        {
             this->headers[key] = value;
+
+            return *this;
+        }
+
+        /**
+         * @brief Set the timeout for the request
+         *
+         * @param timeout: Timeout in seconds (0 for no timeout)
+         */
+        HttpRequest& setTimeout(int timeout) noexcept
+        {
+            this->timeout = timeout;
 
             return *this;
         }
@@ -229,8 +245,8 @@ namespace lklibs {
          *
          * @param limit: Download bandwidth limit in bytes per second (0 for no limit)
          */
-        HttpRequest &setDownloadBandwidthLimit(int limit) noexcept {
-
+        HttpRequest& setDownloadBandwidthLimit(int limit) noexcept
+        {
             this->downloadBandwidthLimit = limit;
 
             return *this;
@@ -241,8 +257,8 @@ namespace lklibs {
          *
          * @param limit: Upload bandwidth limit in bytes per second (0 for no limit)
          */
-        HttpRequest &setUploadBandwidthLimit(int limit) noexcept {
-
+        HttpRequest& setUploadBandwidthLimit(int limit) noexcept
+        {
             this->uploadBandwidthLimit = limit;
 
             return *this;
@@ -256,24 +272,24 @@ namespace lklibs {
          *
          * @return Result of the request as a future (see HttpResult object for details)
          */
-        std::future<HttpResult> send() noexcept {
-
+        std::future<HttpResult> send() noexcept
+        {
             return this->sendRequest();
         }
 
     private:
-
-        enum class ReturnFormat {
+        enum class ReturnFormat
+        {
             TEXT,
             BINARY
         };
 
         const char* HttpMethodStrings[5] = {
-                "GET",
-                "POST",
-                "PUT",
-                "DELETE",
-                "PATCH"
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH"
         };
 
         std::string url;
@@ -282,46 +298,47 @@ namespace lklibs {
         bool sslErrorsWillBeIgnored = false;
         ReturnFormat returnFormat = ReturnFormat::TEXT;
         std::map<std::string, std::string> headers;
+        int timeout = 0;
         int uploadBandwidthLimit = 0;
         int downloadBandwidthLimit = 0;
 
-        struct CurlDeleter {
-
-            void operator()(CURL* ptr) {
-
-                if (ptr) {
-
+        struct CurlDeleter
+        {
+            void operator()(CURL* ptr)
+            {
+                if (ptr)
+                {
                     curl_easy_cleanup(ptr);
                 }
             }
         };
 
-        struct CurlSlistDeleter {
-
-            void operator()(curl_slist* ptr) {
-
-                if (ptr) {
-
+        struct CurlSlistDeleter
+        {
+            void operator()(curl_slist* ptr)
+            {
+                if (ptr)
+                {
                     curl_slist_free_all(ptr);
                 }
             }
         };
 
-        std::future<HttpResult> sendRequest() noexcept {
-
-            return std::async(std::launch::async, [this]() -> HttpResult {
-
+        std::future<HttpResult> sendRequest() noexcept
+        {
+            return std::async(std::launch::async, [this]() -> HttpResult
+            {
                 std::unique_ptr<CURL, CurlDeleter> curl(curl_easy_init());
 
-                if (!curl) {
-
+                if (!curl)
+                {
                     return {false, "", {}, 0, "CURL initialization failed"};
                 }
 
                 std::unique_ptr<curl_slist, CurlSlistDeleter> headerList(nullptr);
 
-                for (const auto &header: this->headers) {
-
+                for (const auto& header : this->headers)
+                {
                     std::string headerStr = header.first + ": " + header.second;
 
                     headerList.reset(curl_slist_append(headerList.release(), headerStr.c_str()));
@@ -336,22 +353,22 @@ namespace lklibs {
                 curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, this->method.c_str());
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->sslErrorsWillBeIgnored ? 0L : 1L);
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->sslErrorsWillBeIgnored ? 0L : 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, this->timeout);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, this->uploadBandwidthLimit);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, this->downloadBandwidthLimit);
 
-
-                if (!this->payload.empty()) {
-
+                if (!this->payload.empty())
+                {
                     curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, this->payload.c_str());
                 }
 
-                if (this->returnFormat == ReturnFormat::BINARY) {
-
+                if (this->returnFormat == ReturnFormat::BINARY)
+                {
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, binaryWriteCallback);
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &binaryBuffer);
-
-                } else {
-
+                }
+                else
+                {
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, textWriteCallback);
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &stringBuffer);
                 }
@@ -359,16 +376,16 @@ namespace lklibs {
                 CURLcode res = curl_easy_perform(curl.get());
                 curl_easy_getinfo(curl.get(), CURLINFO_RESPONSE_CODE, &statusCode);
 
-                if (res == CURLE_OK && statusCode >= 200 && statusCode < 300) {
-
+                if (res == CURLE_OK && statusCode >= 200 && statusCode < 300)
+                {
                     return {true, stringBuffer, binaryBuffer, statusCode, ""};
-
-                } else {
-
+                }
+                else
+                {
                     std::string errorMessage = curl_easy_strerror(res);
 
-                    if (res == CURLE_OK) {
-
+                    if (res == CURLE_OK)
+                    {
                         errorMessage = "HTTP Error: " + std::to_string(statusCode);
                     }
 
@@ -377,16 +394,16 @@ namespace lklibs {
             });
         }
 
-        static size_t textWriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-
-            ((std::string*) userp)->append((char*) contents, size * nmemb);
+        static size_t textWriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+        {
+            ((std::string*)userp)->append((char*)contents, size * nmemb);
 
             return size * nmemb;
         }
 
-        static size_t binaryWriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-
-            auto &buffer = *static_cast<std::vector<unsigned char>*>(userp);
+        static size_t binaryWriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+        {
+            auto& buffer = *static_cast<std::vector<unsigned char>*>(userp);
 
             auto* data = static_cast<unsigned char*>(contents);
 

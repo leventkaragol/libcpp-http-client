@@ -746,6 +746,17 @@ TEST(InvalidSSLTest, HttpGetRequestMustBeCompletedSuccessfullyForAnInvalidSslIfI
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
 }
 
+TEST(TimeoutTest, TimeoutCanBeSet)
+{
+    HttpRequest httpRequest("https://httpstat.us/504?sleep=10000");
+
+    auto response = httpRequest.setTimeout(2).send().get();
+
+    ASSERT_FALSE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 0) << "HTTP Status Code is not 404";
+    ASSERT_FALSE(response.errorMessage.empty()) << "HTTP Error Message is empty";
+}
+
 TEST(BandwidthLimit, DownloadBandwidthLimitCanBeSet)
 {
     HttpRequest httpRequest("https://httpbun.com/get");
