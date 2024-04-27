@@ -187,6 +187,21 @@ void ignoreSslErrors()
     std::cout << "Data: " << response.textData << std::endl;
 }
 
+void setTLSVersion()
+{
+    HttpRequest httpRequest("https://httpbun.com/get");
+
+    // You can set the TLS version to be used for the request with setTLSVersion method
+    auto response = httpRequest
+                    .setTLSVersion(TLSVersion::TLSv1_3)
+                    .send()
+                    .get();
+
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+    std::cout << "Data: " << response.textData << std::endl;
+}
+
 void setTimeout()
 {
     HttpRequest httpRequest("https://httpstat.us/504?sleep=10000");
@@ -242,6 +257,8 @@ int main()
     simplePatch();
 
     ignoreSslErrors();
+
+    setTLSVersion();
 
     setTimeout();
 
