@@ -28,7 +28,7 @@ jobs:
           ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg
       - name: Clone project repository
         run: |
-          git clone https://github.com/lk-libs/libcpp-http-client.git /root/libcpp-http-client
+          git clone https://github.com/leventkaragol/libcpp-http-client.git /root/libcpp-http-client
       - name: Run cmake with vcpkg toolchain
         run: |
           cd /root/libcpp-http-client

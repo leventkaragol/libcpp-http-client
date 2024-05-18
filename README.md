@@ -2,8 +2,8 @@
 
 Modern, non-blocking and exception free, header-only HTTP Client library for C++ (17+)
 
-[![linux](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/linux.yml)
-[![windows](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows.yml/badge.svg)](https://github.com/lk-libs/libcpp-http-client/actions/workflows/windows.yml)
+[![linux](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/linux.yml/badge.svg)](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/linux.yml)
+[![windows](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/windows.yml/badge.svg)](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/windows.yml)
 
 
 > [!TIP]
@@ -543,7 +543,7 @@ send return the class itself, so they can be added one after the other like a ch
 
 MIT License
 
-Copyright (c) 2024 lk-libs, Levent KARAGÖL
+Copyright (c) 2024 Levent KARAGÖL
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -567,7 +567,7 @@ SOFTWARE.
 ## Contact
 
 If you have problems regarding the library, please open an 
-[issue on GitHub](https://github.com/lk-libs/libcpp-http-client/issues/new). 
+[issue on GitHub](https://github.com/leventkaragol/libcpp-http-client/issues/new). 
 Please describe your request, issue, or question in as much detail as possible 
 and also include the version of your compiler and operating system, as well as 
 the version of the library you are using. Before opening a new issue, please 

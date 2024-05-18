@@ -2,11 +2,11 @@
 
 Modern non-blocking HTTP Client library for C++ (17+)
 version 1.3.0
-https://github.com/lk-libs/libcpp-http-client
+https://github.com/leventkaragol/libcpp-http-client
 
-If you encounter any issues, please submit a ticket at https://github.com/lk-libs/libcpp-http-client/issues
+If you encounter any issues, please submit a ticket at https://github.com/leventkaragol/libcpp-http-client/issues
 
-Copyright (c) 2024 lk-libs, Levent KARAGÖL
+Copyright (c) 2024 Levent KARAGÖL
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
