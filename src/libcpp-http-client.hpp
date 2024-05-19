@@ -1,7 +1,7 @@
 /*
 
 Modern, non-blocking and exception free, header-only HTTP Client library for C++ (17+)
-version 1.3.0
+version 1.3.1
 https://github.com/leventkaragol/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/leventkaragol/libcpp-http-client/issues
