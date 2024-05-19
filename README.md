@@ -513,29 +513,29 @@ send return the class itself, so they can be added one after the other like a ch
 > All methods and parameters descriptions are also available within the code as comment for IDEs.
 
 ```cpp
-- HttpRequest& setMethod(const HttpMethod& method) noexcept
+HttpRequest& setMethod(const HttpMethod& method) noexcept;
 
-- HttpRequest& setQueryString(const std::string& queryString) noexcept
+HttpRequest& setQueryString(const std::string& queryString) noexcept;
 
-- HttpRequest& setPayload(const std::string& payload) noexcept
+HttpRequest& setPayload(const std::string& payload) noexcept;
 
-- HttpRequest& returnAsBinary() noexcept
+HttpRequest& returnAsBinary() noexcept;
 
-- HttpRequest& addHeader(const std::string& key, const std::string& value) noexcept
+HttpRequest& addHeader(const std::string& key, const std::string& value) noexcept;
 
-- HttpRequest& setTimeout(const int timeout) noexcept
+HttpRequest& setTimeout(const int timeout) noexcept;
 
-- HttpRequest& ignoreSslErrors() noexcept
+HttpRequest& ignoreSslErrors() noexcept;
 
-- HttpRequest& setTLSVersion(const TLSVersion version) noexcept
+HttpRequest& setTLSVersion(const TLSVersion version) noexcept;
 
-- HttpRequest& setUserAgent(const std::string& userAgent) noexcept
+HttpRequest& setUserAgent(const std::string& userAgent) noexcept;
 
-- HttpRequest& setDownloadBandwidthLimit(const int limit) noexcept
+HttpRequest& setDownloadBandwidthLimit(const int limit) noexcept;
 
-- HttpRequest& setUploadBandwidthLimit(const int limit) noexcept
+HttpRequest& setUploadBandwidthLimit(const int limit) noexcept;
 
-- std::future<HttpResult> send() noexcept
+std::future<HttpResult> send() noexcept;
 ```
 
 
