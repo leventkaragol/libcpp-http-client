@@ -16,11 +16,13 @@ jobs:
       image: ubuntu:24.04
 
     steps:
+      - name: Enable core dumps
+        run: ulimit -c unlimited
       - uses: actions/checkout@v3
       - name: Install prerequisites
         run: |
           apt update
-          apt install -y build-essential g++ make cmake pkg-config git wget curl zip unzip tar
+          apt install -y build-essential g++ make cmake pkg-config git wget curl zip unzip tar gdb
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git /opt/vcpkg
@@ -37,7 +39,7 @@ jobs:
         run: |
           cd /root/libcpp-http-client
           cmake --build build --config Release
-      - name: Run tests
+      - name: Run tests with gdb
         run: |
           cd /root/libcpp-http-client
-          ./build/test/test
+          gdb -ex "run" -ex "bt" -ex "quit" --args ./build/test/test
