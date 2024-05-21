@@ -1,6 +1,6 @@
 # libcpp-http-client
 
-Modern, non-blocking and exception free, header-only HTTP Client library for C++ (17+)
+Modern, non-blocking and exception free HTTP Client library for C++ (17+)
 
 [![linux](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/linux.yml/badge.svg)](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/linux.yml)
 [![windows](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/windows.yml/badge.svg)](https://github.com/leventkaragol/libcpp-http-client/actions/workflows/windows.yml)
