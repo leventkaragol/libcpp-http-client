@@ -49,11 +49,11 @@ cmake_minimum_required(VERSION 3.14)
 
 project(myProject)
 
-add_executable(myProject main.cpp)
-
 find_package(CURL CONFIG REQUIRED)
 
-target_link_libraries(myProject PRIVATE libcpp-http-client CURL::libcurl)
+add_executable(myProject main.cpp libcpp-http-client.hpp)
+
+target_link_libraries(myProject PRIVATE CURL::libcurl)
 
 ```
 
