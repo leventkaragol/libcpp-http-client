@@ -286,37 +286,37 @@ void streamData()
 
 int main()
 {
-    // simpleGet();
-    //
-    // nonBlockingGet();
-    //
-    // receiveBinaryData();
-    //
-    // receiveError();
-    //
-    // sendingHttpHeaders();
-    //
-    // simplePostWithFormData();
-    //
-    // simplePostWithJSONData();
-    //
-    // simplePutWithFormData();
-    //
-    // simpleDeleteWithFormData();
-    //
-    // simplePatch();
-    //
-    // ignoreSslErrors();
-    //
-    // setTLSVersion();
-    //
-    // setUserAgent();
-    //
-    // setTimeout();
-    //
-    // setDownloadAndUploadBandwidthLimit();
-    //
-    // getCurlCommand();
+    simpleGet();
+
+    nonBlockingGet();
+
+    receiveBinaryData();
+
+    receiveError();
+
+    sendingHttpHeaders();
+
+    simplePostWithFormData();
+
+    simplePostWithJSONData();
+
+    simplePutWithFormData();
+
+    simpleDeleteWithFormData();
+
+    simplePatch();
+
+    ignoreSslErrors();
+
+    setTLSVersion();
+
+    setUserAgent();
+
+    setTimeout();
+
+    setDownloadAndUploadBandwidthLimit();
+
+    getCurlCommand();
 
     streamData();
 
