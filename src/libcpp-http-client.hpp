@@ -1,7 +1,7 @@
 /*
 
 Modern, non-blocking and exception free HTTP Client library for C++ (17+)
-version 1.4.0
+version 1.5.0
 https://github.com/leventkaragol/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/leventkaragol/libcpp-http-client/issues
@@ -134,7 +134,6 @@ namespace lklibs
                 {
                     initialized = true;
 
-                    // Cleanup is called at program exit.
                     std::atexit(cleanup);
                 }
             }
@@ -304,6 +303,18 @@ namespace lklibs
         }
 
         /**
+         * @brief The callback that will be triggered when each piece (chunk) of incoming data is processed
+         *
+         * @param callback: Callback function that will be called with the data and its length
+        */
+        HttpRequest& onDataReceived(std::function<void(const unsigned char* data, size_t dataLength)> callback) noexcept
+        {
+            dataCallback = std::move(callback);
+
+            return *this;
+        }
+
+        /**
          * @brief Convert the request to a cURL command string
          * This can be useful for debugging or logging purposes
          *
@@ -394,7 +405,7 @@ namespace lklibs
 
         struct CurlDeleter
         {
-            void operator()(CURL* ptr)
+            void operator()(CURL* ptr) const
             {
                 if (ptr)
                 {
@@ -405,7 +416,7 @@ namespace lklibs
 
         struct CurlSlistDeleter
         {
-            void operator()(curl_slist* ptr)
+            void operator()(curl_slist* ptr) const
             {
                 if (ptr)
                 {
@@ -413,6 +424,8 @@ namespace lklibs
                 }
             }
         };
+
+        std::function<void(const unsigned char* data, size_t dataLength)> dataCallback;
 
         std::future<HttpResult> sendRequest() noexcept
         {
@@ -436,17 +449,17 @@ namespace lklibs
 
                 std::string stringBuffer;
                 std::vector<unsigned char> binaryBuffer;
-                int statusCode = 0;
+                long statusCode = 0;
 
                 curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headerList.get());
                 curl_easy_setopt(curl.get(), CURLOPT_URL, this->url.c_str());
                 curl_easy_setopt(curl.get(), CURLOPT_CUSTOMREQUEST, this->method.c_str());
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, this->sslErrorsWillBeIgnored ? 0L : 1L);
                 curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, this->sslErrorsWillBeIgnored ? 0L : 1L);
-                curl_easy_setopt(curl.get(), CURLOPT_SSLVERSION, static_cast<int>(this->tlsVersion));
+                curl_easy_setopt(curl.get(), CURLOPT_SSLVERSION, static_cast<long>(this->tlsVersion));
                 curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, this->timeout);
-                curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, this->uploadBandwidthLimit);
-                curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, this->downloadBandwidthLimit);
+                curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, static_cast<curl_off_t>(this->uploadBandwidthLimit));
+                curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, static_cast<curl_off_t>(this->downloadBandwidthLimit));
 
                 if (!this->userAgent.empty())
                 {
@@ -458,7 +471,12 @@ namespace lklibs
                     curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, this->payload.c_str());
                 }
 
-                if (this->returnFormat == ReturnFormat::BINARY)
+                if (dataCallback)
+                {
+                    curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, streamingWriteCallback);
+                    curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
+                }
+                else if (this->returnFormat == ReturnFormat::BINARY)
                 {
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, binaryWriteCallback);
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &binaryBuffer);
@@ -469,35 +487,58 @@ namespace lklibs
                     curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &stringBuffer);
                 }
 
-                CURLcode res = curl_easy_perform(curl.get());
+                const auto res = curl_easy_perform(curl.get());
                 curl_easy_getinfo(curl.get(), CURLINFO_RESPONSE_CODE, &statusCode);
 
                 if (res == CURLE_OK && statusCode >= 200 && statusCode < 300)
                 {
-                    return {true, stringBuffer, binaryBuffer, statusCode, ""};
+                    return {
+                        true,
+                        std::move(stringBuffer),
+                        std::move(binaryBuffer),
+                        static_cast<int>(statusCode),
+                        ""
+                    };
                 }
                 else
                 {
-                    std::string errorMessage = curl_easy_strerror(res);
-
+                    std::string err = curl_easy_strerror(res);
                     if (res == CURLE_OK)
                     {
-                        errorMessage = "HTTP Error: " + std::to_string(statusCode);
+                        err = "HTTP Error: " + std::to_string(statusCode);
                     }
-
-                    return {false, stringBuffer, binaryBuffer, statusCode, errorMessage};
+                    return {
+                        false,
+                        std::move(stringBuffer),
+                        std::move(binaryBuffer),
+                        static_cast<int>(statusCode),
+                        std::move(err)
+                    };
                 }
             });
         }
 
-        static size_t textWriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+        static size_t streamingWriteCallback(const void* contents, const size_t size, size_t nmemb, void* userp)
         {
-            ((std::string*)userp)->append((char*)contents, size * nmemb);
+            const auto* self = static_cast<HttpRequest*>(userp);
+
+            const size_t total = size * nmemb;
+
+            const auto* data = static_cast<const unsigned char*>(contents);
+
+            self->dataCallback(data, total);
+
+            return total;
+        }
+
+        static size_t textWriteCallback(void* contents, const size_t size, size_t nmemb, void* userp)
+        {
+            static_cast<std::string*>(userp)->append(static_cast<char*>(contents), size * nmemb);
 
             return size * nmemb;
         }
 
-        static size_t binaryWriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+        static size_t binaryWriteCallback(void* contents, const size_t size, size_t nmemb, void* userp)
         {
             auto& buffer = *static_cast<std::vector<unsigned char>*>(userp);
 

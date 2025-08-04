@@ -265,39 +265,60 @@ void getCurlCommand()
     std::cout << "Curl Command: " << response.toCurlCommand() << std::endl;
 }
 
+void streamData()
+{
+    HttpRequest httpRequest("https://httpbun.com/bytes/5000");
+
+    // You can stream the data by onDataReceived methods
+    httpRequest.onDataReceived([&](const unsigned char* chunk, const size_t dataLength)
+    {
+        std::cout << "Received chunk of size: " << dataLength << std::endl;
+    });
+
+    auto response = httpRequest
+                    .returnAsBinary()
+                    .send()
+                    .get();
+
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+}
+
 int main()
 {
-    simpleGet();
+    // simpleGet();
+    //
+    // nonBlockingGet();
+    //
+    // receiveBinaryData();
+    //
+    // receiveError();
+    //
+    // sendingHttpHeaders();
+    //
+    // simplePostWithFormData();
+    //
+    // simplePostWithJSONData();
+    //
+    // simplePutWithFormData();
+    //
+    // simpleDeleteWithFormData();
+    //
+    // simplePatch();
+    //
+    // ignoreSslErrors();
+    //
+    // setTLSVersion();
+    //
+    // setUserAgent();
+    //
+    // setTimeout();
+    //
+    // setDownloadAndUploadBandwidthLimit();
+    //
+    // getCurlCommand();
 
-    nonBlockingGet();
-
-    receiveBinaryData();
-
-    receiveError();
-
-    sendingHttpHeaders();
-
-    simplePostWithFormData();
-
-    simplePostWithJSONData();
-
-    simplePutWithFormData();
-
-    simpleDeleteWithFormData();
-
-    simplePatch();
-
-    ignoreSslErrors();
-
-    setTLSVersion();
-
-    setUserAgent();
-
-    setTimeout();
-
-    setDownloadAndUploadBandwidthLimit();
-
-    getCurlCommand();
+    streamData();
 
     return 0;
 }

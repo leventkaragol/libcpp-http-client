@@ -841,6 +841,24 @@ TEST(CurlCommandTest, CurlCommandCanBeGet)
     ASSERT_EQ(response.toCurlCommand(), "curl -X POST -H \"Content-Type: application/json\" -A \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0\" --max-time 3 --limit-rate 10240 --data '{\"param1\": 7, \"param2\": \"test\"}' \"https://httpbun.com/post\"") << "Curl command is invalid";
 }
 
+TEST(StreamData, ResponseCanBeStreamedByOnDataReceivedCallback)
+{
+    HttpRequest httpRequest("https://httpbun.com/bytes/5000");
+
+    httpRequest.onDataReceived([&](const unsigned char* chunk, const size_t dataLength)
+    {
+        ASSERT_TRUE(dataLength > 0) << "Binary data length is invalid";
+    });
+
+    auto response = httpRequest
+                    .returnAsBinary()
+                    .send()
+                    .get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+}
+
 int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);

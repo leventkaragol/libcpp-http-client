@@ -29,6 +29,7 @@ Modern, non-blocking and exception free HTTP Client library for C++ (17+)
 * [Setting the User Agent](#setting-the-user-agent)
 * [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
 * [How do I get the request as a curl command?](#how-do-i-get-the-request-as-a-curl-command)
+* [How to stream data?](#how-to-stream-data)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
 * [License](#license)
@@ -513,6 +514,39 @@ int main() {
                     
     std::string curlCommand = response.toCurlCommand();
     
+    return 0;
+}
+```
+
+
+## How to stream data?
+
+Instead of receiving the data all at once, you can also receive it in parts using the **"onDataReceived"** callback method.
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    
+    HttpRequest httpRequest("https://api.myproject.com/image/5000");
+
+    // You can stream the data by onDataReceived methods
+    httpRequest.onDataReceived([&](const unsigned char* chunk, const size_t dataLength)
+    {
+        std::cout << "Received chunk of size: " << dataLength << std::endl;
+    });
+
+    auto response = httpRequest
+            .returnAsBinary()
+            .send()
+            .get();
+    
+    std::cout << "Succeed: " << response.succeed << std::endl;
+    std::cout << "Http Status Code: " << response.statusCode << std::endl;
+
     return 0;
 }
 ```
