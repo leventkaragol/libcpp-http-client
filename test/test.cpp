@@ -105,7 +105,7 @@ TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestMade
 
 TEST(HttpGetTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpGetRequestForAnotherError)
 {
-    HttpRequest httpRequest("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer/123");
 
     auto response = httpRequest.send().get();
 
@@ -246,7 +246,7 @@ TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestMa
 
 TEST(HttpPostTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPostRequestForAnotherError)
 {
-    HttpRequest httpRequest("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer/123");
 
     auto response = httpRequest
                     .setMethod(HttpMethod::POST)
@@ -393,7 +393,7 @@ TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestMade
 
 TEST(HttpPutTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPutRequestForAnotherError)
 {
-    HttpRequest httpRequest("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer/123");
 
     auto response = httpRequest
                     .setMethod(HttpMethod::PUT)
@@ -540,7 +540,7 @@ TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteReque
 
 TEST(HttpDeleteTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpDeleteRequestForAnotherError)
 {
-    HttpRequest httpRequest("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer/123");
 
     auto response = httpRequest
                     .setMethod(HttpMethod::DELETE_)
@@ -685,7 +685,7 @@ TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequest
 
 TEST(HttpPatchTest, AnErrorMessageShouldBeReturnedInResponseToAnHttpPatchRequestForAnotherError)
 {
-    HttpRequest httpRequest("https://httpbun.com/bearer");
+    HttpRequest httpRequest("https://httpbun.com/bearer/123");
 
     auto response = httpRequest.setMethod(HttpMethod::PATCH).send().get();
 
@@ -823,6 +823,22 @@ TEST(BandwidthLimitTest, UploadBandwidthLimitCanBeSet)
     ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
     ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
     ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+}
+
+TEST(CurlCommandTest, CurlCommandCanBeGet)
+{
+    HttpRequest httpRequest("https://httpbun.com/post");
+
+    auto response = httpRequest
+                    .setMethod(HttpMethod::POST)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .setTimeout(3)
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
+                    .setDownloadBandwidthLimit(10240)
+                    .setUploadBandwidthLimit(20480);
+
+    ASSERT_EQ(response.toCurlCommand(), "curl -X POST -H \"Content-Type: application/json\" -A \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0\" --max-time 3 --limit-rate 10240 --data '{\"param1\": 7, \"param2\": \"test\"}' \"https://httpbun.com/post\"") << "Curl command is invalid";
 }
 
 int main(int argc, char** argv)

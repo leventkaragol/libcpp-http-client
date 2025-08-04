@@ -4,12 +4,12 @@
   "builtin-baseline" : "0719a71389654b88d827501d88e37e58ea8cbd70",
   "dependencies" : [ {
     "name" : "gtest",
-    "version>=" : "1.14.0"
+    "version>=" : "1.17.0#1"
   }, {
     "name" : "nlohmann-json",
-    "version>=" : "3.11.3"
+    "version>=" : "3.12.0"
   }, {
     "name" : "curl",
-    "version>=" : "8.7.1#3"
+    "version>=" : "8.15.0"
   } ]
 }

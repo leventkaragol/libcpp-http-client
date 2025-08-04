@@ -248,6 +248,22 @@ void setDownloadAndUploadBandwidthLimit()
     std::cout << "Data: " << response.textData << std::endl;
 }
 
+void getCurlCommand()
+{
+    HttpRequest httpRequest("https://httpbun.com/post");
+
+    auto response = httpRequest
+                    .setMethod(HttpMethod::POST)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .setTimeout(3)
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
+                    .setDownloadBandwidthLimit(10240)
+                    .setUploadBandwidthLimit(20480);
+
+    // You can convert the request to a cURL command string with toCurlCommand method
+    std::cout << "Curl Command: " << response.toCurlCommand() << std::endl;
+}
 
 int main()
 {
@@ -280,6 +296,8 @@ int main()
     setTimeout();
 
     setDownloadAndUploadBandwidthLimit();
+
+    getCurlCommand();
 
     return 0;
 }

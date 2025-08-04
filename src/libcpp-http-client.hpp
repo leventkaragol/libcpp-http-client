@@ -1,7 +1,7 @@
 /*
 
 Modern, non-blocking and exception free HTTP Client library for C++ (17+)
-version 1.3.1
+version 1.4.0
 https://github.com/leventkaragol/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/leventkaragol/libcpp-http-client/issues
@@ -38,7 +38,7 @@ SOFTWARE.
 #include <map>
 #include <memory>
 #include <mutex>
-#include <cstdlib>
+#include <sstream>
 #include <curl/curl.h>
 
 namespace lklibs
@@ -76,7 +76,7 @@ namespace lklibs
 
         HttpResult() = default;
 
-        HttpResult(bool succeed, std::string textData, std::vector<unsigned char> binaryData, int statusCode, std::string errorMessage)
+        HttpResult(const bool succeed, std::string textData, std::vector<unsigned char> binaryData, const int statusCode, std::string errorMessage)
             : succeed(succeed), textData(std::move(textData)), binaryData(std::move(binaryData)), statusCode(statusCode), errorMessage(std::move(errorMessage))
         {
         }
@@ -304,6 +304,55 @@ namespace lklibs
         }
 
         /**
+         * @brief Convert the request to a cURL command string
+         * This can be useful for debugging or logging purposes
+         *
+         * @return cURL command string representing the request
+         */
+        [[nodiscard]] std::string toCurlCommand() const noexcept
+        {
+            std::ostringstream cmd;
+
+            cmd << "curl";
+
+            cmd << " -X " << method;
+
+            for (const auto& header : headers)
+            {
+                cmd << " -H \"" << header.first << ": " << header.second << "\"";
+            }
+
+            if (!userAgent.empty())
+            {
+                cmd << " -A \"" << userAgent << "\"";
+            }
+
+            if (timeout > 0)
+            {
+                cmd << " --max-time " << timeout;
+            }
+
+            if (sslErrorsWillBeIgnored)
+            {
+                cmd << " -k";
+            }
+
+            if (downloadBandwidthLimit > 0)
+            {
+                cmd << " --limit-rate " << downloadBandwidthLimit;
+            }
+
+            if (!payload.empty())
+            {
+                cmd << " --data '" << escapeSingleQuotes(payload) << "'";
+            }
+
+            cmd << " \"" << url << "\"";
+
+            return cmd.str();
+        }
+
+        /**
          * @brief Send the HTTP request and return the result as a future
          * The result can be obtained by calling the get() method of the future
          * get() method will block until the result is available so it is recommended to use it
@@ -457,6 +506,25 @@ namespace lklibs
             buffer.insert(buffer.end(), data, data + size * nmemb);
 
             return size * nmemb;
+        }
+
+        static std::string escapeSingleQuotes(const std::string& input)
+        {
+            std::string output;
+
+            for (const char c : input)
+            {
+                if (c == '\'')
+                {
+                    output += "'\\''";
+                }
+                else
+                {
+                    output += c;
+                }
+            }
+
+            return output;
         }
     };
 }

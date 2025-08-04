@@ -28,6 +28,7 @@ Modern, non-blocking and exception free HTTP Client library for C++ (17+)
 * [How to set timeout?](#how-to-set-timeout)
 * [Setting the User Agent](#setting-the-user-agent)
 * [How can I limit download and upload bandwidth?](#how-can-i-limit-download-and-upload-bandwidth)
+* [How do I get the request as a curl command?](#how-do-i-get-the-request-as-a-curl-command)
 * [Semantic Versioning](#semantic-versioning)
 * [Full function list](#full-function-list)
 * [License](#license)
@@ -482,6 +483,35 @@ int main() {
                     .setUploadBandwidthLimit(20480) // 20 KB/sec
                     .send()
                     .get();
+    
+    return 0;
+}
+```
+
+
+## How do I get the request as a curl command?
+
+If you want to receive the request as a curl command, you can call the toCurlCommand method after making the necessary preparations.
+
+```cpp
+#include <fstream>
+#include "libcpp-http-client.hpp"
+
+using namespace lklibs;
+
+int main() {
+    HttpRequest httpRequest("https://api.myproject.com");
+    
+    auto response = httpRequest
+                    .setMethod(HttpMethod::POST)
+                    .setPayload(R"({"param1": 7, "param2": "test"})")
+                    .addHeader("Content-Type", "application/json")
+                    .setTimeout(3)
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0")
+                    .setDownloadBandwidthLimit(10240)
+                    .setUploadBandwidthLimit(20480);
+                    
+    std::string curlCommand = response.toCurlCommand();
     
     return 0;
 }
