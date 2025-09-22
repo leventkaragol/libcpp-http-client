@@ -1,7 +1,7 @@
 /*
 
 Modern, non-blocking and exception free HTTP Client library for C++ (17+)
-version 1.5.0
+version 1.6.0
 https://github.com/leventkaragol/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/leventkaragol/libcpp-http-client/issues
@@ -74,10 +74,12 @@ namespace lklibs
          */
         std::string errorMessage;
 
+		std::map<std::string, std::string> headers;
+
         HttpResult() = default;
 
-        HttpResult(const bool succeed, std::string textData, std::vector<unsigned char> binaryData, const int statusCode, std::string errorMessage)
-            : succeed(succeed), textData(std::move(textData)), binaryData(std::move(binaryData)), statusCode(statusCode), errorMessage(std::move(errorMessage))
+        HttpResult(const bool succeed, std::string textData, std::vector<unsigned char> binaryData, const int statusCode, std::string errorMessage, std::map<std::string, std::string> headers)
+            : succeed(succeed), textData(std::move(textData)), binaryData(std::move(binaryData)), statusCode(statusCode), errorMessage(std::move(errorMessage)), headers(std::move(headers))
         {
         }
     };
@@ -435,7 +437,7 @@ namespace lklibs
 
                 if (!curl)
                 {
-                    return {false, "", {}, 0, "CURL initialization failed"};
+                    return {false, "", {}, 0, "CURL initialization failed", {}};
                 }
 
                 std::unique_ptr<curl_slist, CurlSlistDeleter> headerList(nullptr);
@@ -450,6 +452,7 @@ namespace lklibs
                 std::string stringBuffer;
                 std::vector<unsigned char> binaryBuffer;
                 long statusCode = 0;
+                std::map<std::string, std::string> headers = {};
 
                 curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headerList.get());
                 curl_easy_setopt(curl.get(), CURLOPT_URL, this->url.c_str());
@@ -460,6 +463,11 @@ namespace lklibs
                 curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, this->timeout);
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, static_cast<curl_off_t>(this->uploadBandwidthLimit));
                 curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, static_cast<curl_off_t>(this->downloadBandwidthLimit));
+                curl_easy_setopt(curl.get(), CURLOPT_MAX_SEND_SPEED_LARGE, this->uploadBandwidthLimit);
+                curl_easy_setopt(curl.get(), CURLOPT_MAX_RECV_SPEED_LARGE, this->downloadBandwidthLimit);
+                curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
+                curl_easy_setopt(curl.get(), CURLOPT_HEADERFUNCTION, headerCallback);
+                curl_easy_setopt(curl.get(), CURLOPT_HEADERDATA, &headers);
 
                 if (!this->userAgent.empty())
                 {
@@ -497,7 +505,8 @@ namespace lklibs
                         std::move(stringBuffer),
                         std::move(binaryBuffer),
                         static_cast<int>(statusCode),
-                        ""
+                        "",
+                        headers
                     };
                 }
                 else
@@ -512,10 +521,34 @@ namespace lklibs
                         std::move(stringBuffer),
                         std::move(binaryBuffer),
                         static_cast<int>(statusCode),
-                        std::move(err)
+                        std::move(err),
+                        headers
                     };
                 }
             });
+        }
+
+        static size_t headerCallback(const char* buffer, const size_t size, const size_t nitems, void* userdata)
+        {
+            const size_t total_size = nitems * size;
+            std::string header_line(buffer, total_size);
+
+            auto* headers = static_cast<std::map<std::string, std::string>*>(userdata);
+
+            const auto colon_pos = header_line.find(':');
+
+            if (colon_pos != std::string::npos)
+            {
+                std::string key = header_line.substr(0, colon_pos);
+                std::string value = header_line.substr(colon_pos + 1);
+
+                value.erase(0, value.find_first_not_of(" \t"));
+                value.erase(value.find_last_not_of("\r\n") + 1);
+
+                headers->insert({key, value});
+            }
+
+            return total_size;
         }
 
         static size_t streamingWriteCallback(const void* contents, const size_t size, size_t nmemb, void* userp)
