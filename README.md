@@ -583,6 +583,8 @@ HttpRequest& setQueryString(const std::string& queryString) noexcept;
 
 HttpRequest& setPayload(const std::string& payload) noexcept;
 
+HttpRequest& addMultipartFormData(const std::string& name, const std::string& data, const std::optional<std::string>& mimeType = std::nullopt) noexcept;
+
 HttpRequest& returnAsBinary() noexcept;
 
 HttpRequest& addHeader(const std::string& key, const std::string& value) noexcept;

@@ -1,7 +1,7 @@
 /*
 
 Modern, non-blocking and exception free HTTP Client library for C++ (17+)
-version 1.6.0
+version 1.7.0
 https://github.com/leventkaragol/libcpp-http-client
 
 If you encounter any issues, please submit a ticket at https://github.com/leventkaragol/libcpp-http-client/issues
@@ -38,6 +38,7 @@ SOFTWARE.
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <sstream>
 #include <curl/curl.h>
 
@@ -235,6 +236,20 @@ namespace lklibs
         }
 
         /**
+         * @brief Set the file data to be sent with the request as multipart/form-data
+         *
+         * @param name: Name of the form field
+         * @param data: Path to the file to be sent
+         * @param mimeType: Optional MIME type of the file
+         */
+        HttpRequest& addMultipartFormData(const std::string& name, const std::string& data, const std::optional<std::string>& mimeType = std::nullopt) noexcept
+        {
+            this->formData[name] = FormData{data, mimeType};
+
+            return *this;
+        }
+
+        /**
          * @brief Set the timeout for the request
          *
          * @param timeout: Timeout in seconds (0 for no timeout)
@@ -393,9 +408,16 @@ namespace lklibs
             "PATCH"
         };
 
+        struct FormData
+        {
+            std::string data;
+            std::optional<std::string> mimeType;
+        };
+
         std::string url;
         std::string method = "GET";
         std::string payload;
+        std::map<std::string, FormData> formData;
         std::string userAgent;
         bool sslErrorsWillBeIgnored = false;
         ReturnFormat returnFormat = ReturnFormat::TEXT;
@@ -477,6 +499,31 @@ namespace lklibs
                 if (!this->payload.empty())
                 {
                     curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, this->payload.c_str());
+                }
+
+                const std::unique_ptr<curl_mime, decltype(&curl_mime_free)> mime(curl_mime_init(curl.get()), &curl_mime_free);
+
+                if (!this->formData.empty())
+                {
+                    for (const auto& [field, content] : this->formData)
+                    {
+                        std::unique_ptr<curl_mimepart, std::function<void(curl_mimepart*)>> part(
+                            curl_mime_addpart(mime.get()),
+                            [](curl_mimepart*) {});
+
+                        curl_mime_name(part.get(), field.c_str());
+                        if (content.mimeType.has_value())
+                        {
+                            curl_mime_filedata(part.get(), content.data.c_str());
+                            curl_mime_type(part.get(), content.mimeType->c_str());
+                        }
+                        else
+                        {
+                            curl_mime_data(part.get(), content.data.c_str(), CURL_ZERO_TERMINATED);
+                        }
+                    }
+
+                    curl_easy_setopt(curl.get(), CURLOPT_MIMEPOST, mime.get());
                 }
 
                 if (dataCallback)

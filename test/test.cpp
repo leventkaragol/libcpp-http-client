@@ -164,6 +164,30 @@ TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsSimplestForm)
     ASSERT_EQ(data["form"]["param2"], "test") << "Payload is invalid";
 }
 
+TEST(HttpPostTest, HttpPostRequestMustBeCompletedSuccessfullyInItsFormData)
+{
+    HttpRequest httpRequest("https://httpbun.com/post");
+
+    auto response = httpRequest
+                    .setMethod(HttpMethod::POST)
+                    .addMultipartFormData("param1", "7")
+                    .addMultipartFormData("param2", "test")
+                    .send()
+                    .get();
+
+    ASSERT_TRUE(response.succeed) << "HTTP Request failed";
+    ASSERT_EQ(response.statusCode, 200) << "HTTP Status Code is not 200";
+    ASSERT_FALSE(response.textData.empty()) << "HTTP Response is empty";
+    ASSERT_TRUE(response.binaryData.empty()) << "Binary data is not empty";
+    ASSERT_TRUE(response.errorMessage.empty()) << "HTTP Error Message is not empty";
+
+    auto data = json::parse(response.textData);
+
+    ASSERT_EQ(data["method"], "POST") << "HTTP Method is invalid";
+    ASSERT_EQ(data["form"]["param1"], "7") << "Payload is invalid";
+    ASSERT_EQ(data["form"]["param2"], "test") << "Payload is invalid";
+}
+
 TEST(HttpPostTest, MultipleHttpPostRequestMustBeCompletedSuccessfullyInNonBlockingForm)
 {
     HttpRequest httpRequest1("https://httpbun.com/post");
